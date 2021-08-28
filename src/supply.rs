@@ -69,7 +69,6 @@ pub enum SupplyMeasure {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 #[display("circulating {known_circulating}, max {issue_limit}")]
 pub struct Supply {
     /// Sum of all already issued amounts which are known from the stash
@@ -157,7 +156,6 @@ impl Supply {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 #[display("{node_id} -> {amount}")]
 pub struct Issue {
     /// Unique primary key; equals to the state transition id that performs
@@ -321,7 +319,6 @@ impl TryFrom<&Genesis> for Issue {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 #[display("{no}:{node_id}")]
 pub struct Epoch {
     /// Unique primary key; equals to the state transition id that performs
@@ -435,7 +432,6 @@ impl Epoch {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 #[display("{no}:{node_id}")]
 pub struct BurnReplace {
     /// Unique primary key; equals to the state transition id that performs

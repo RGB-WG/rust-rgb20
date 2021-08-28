@@ -53,7 +53,6 @@ pub type FractionalAmount = f64;
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate")
 )]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 #[display("{0}~{1}")]
 pub struct PreciseAmount(AtomicValue, u8);
 

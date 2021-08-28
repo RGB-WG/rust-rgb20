@@ -44,7 +44,6 @@ use crate::schema::{self, FieldType};
 )]
 #[display("{ticker}")]
 #[derive(StrictEncode, StrictDecode)]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 pub struct Nomination {
     /// Asset ticker, up to 8 characters
     ticker: String,
@@ -112,7 +111,6 @@ impl TryFrom<&Genesis> for Nomination {
 )]
 #[display("{no}:{node_id}")]
 #[derive(StrictEncode, StrictDecode)]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 pub struct Renomination {
     /// Unique primary key; equals to the state transition id that performs
     /// renomination operation

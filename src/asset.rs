@@ -23,7 +23,7 @@ use std::convert::{TryFrom, TryInto};
 
 use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
-use lnpbp::Chain;
+use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use rgb::seal::WitnessVoutError;
 
@@ -104,7 +104,6 @@ pub enum Error {
     Clone, Getters, PartialEq, Debug, Display, StrictEncode, StrictDecode,
 )]
 #[display("{genesis_nomination} ({id})")]
-#[strict_encoding_crate(lnpbp::strict_encoding)]
 pub struct Asset {
     /// Bech32-representation of the asset genesis
     genesis: String,

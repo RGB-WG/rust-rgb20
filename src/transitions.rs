@@ -19,7 +19,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::convert::TryFrom;
 
 use bitcoin::OutPoint;
-use lnpbp::Chain;
+use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use rgb::secp256k1zkp;
 

@@ -17,7 +17,7 @@ use std::str::FromStr;
 
 use rgb::schema::{
     constants::*, script, AssignmentAction, Bits, DataFormat,
-    DiscreteFiniteFieldFormat, GenesisSchema, HistoryProofFormat, Occurences,
+    DiscreteFiniteFieldFormat, GenesisSchema, HistoryProofFormat, Occurrences,
     Schema, SchemaId, StateFormat, StateSchema, TransitionAction,
     TransitionSchema,
 };
@@ -153,7 +153,7 @@ impl From<TransitionType> for rgb::schema::TransitionType {
 
 /// Builds & returns complete RGB20 schema (root schema object)
 pub fn schema() -> Schema {
-    use Occurences::*;
+    use Occurrences::*;
 
     // TODO #33: Consider using data containers + state extensions for
     //       providing issuer-created asset meta-information
@@ -401,7 +401,7 @@ pub fn schema() -> Schema {
 /// Provides the only defined RGB20 subschema, which prohibits replace procedure
 /// and allows only burn operations
 pub fn subschema() -> Schema {
-    use Occurences::*;
+    use Occurrences::*;
 
     // TODO #33: Consider using data containers + state extensions for
     //       providing issuer-created asset meta-information
@@ -612,7 +612,7 @@ pub fn subschema() -> Schema {
 mod test {
     use super::*;
     use lnpbp::bech32::Bech32DataString;
-    use lnpbp::strict_encoding::{StrictDecode, StrictEncode};
+    use strict_encoding::{StrictDecode, StrictEncode};
     use rgb::schema::SchemaVerify;
     use rgb::{FromBech32, ToBech32, Validity};
 
