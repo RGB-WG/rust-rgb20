@@ -191,7 +191,7 @@ impl Asset {
     ///     returned by this function will not match the valid data
     #[inline]
     pub fn name(&self) -> &str {
-        &self.active_nomination().ticker()
+        self.active_nomination().ticker()
     }
 
     /// Current version of the asset contract, represented in Ricardian form
@@ -203,8 +203,8 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn ricardian_contract(&self) -> &str {
-        &self.active_nomination().ticker()
+    pub fn ricardian_contract(&self) -> Option<&str> {
+        self.active_nomination().ricardian_contract().as_ref().map(String::as_str)
     }
 
     /// Current decimal precision of the asset value
