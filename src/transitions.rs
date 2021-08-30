@@ -154,7 +154,7 @@ impl Asset {
     /// inflation state transition, which is constructed and returned by this
     /// function
     pub fn inflate(
-        self,
+        &self,
         closing: BTreeSet<OutPoint>,
         next_inflation: AllocationValueMap,
         allocations: AllocationValueVec,
@@ -252,7 +252,7 @@ impl Asset {
     /// Opens a new epoch by closing epoch-controlling seal over epoch opening
     /// state transition, which is constructed and returned by this function
     pub fn epoch(
-        self,
+        &self,
         closing: OutPoint,
         next_epoch: Option<SealPoint>,
         burning_seal: Option<SealPoint>,
@@ -264,7 +264,7 @@ impl Asset {
     /// proof-of-burn state transition, which is constructed and returned by
     /// this function
     pub fn burn(
-        self,
+        &self,
         closing: OutPoint,
         burned_value: AtomicValue,
         burned_utxos: BTreeSet<OutPoint>,
@@ -277,7 +277,7 @@ impl Asset {
     /// burn-controlling seal over proof-of-burn state transition, which is
     /// constructed and returned by this function
     pub fn burn_replace(
-        self,
+        &self,
         closing: OutPoint,
         burned_value: AtomicValue,
         burned_utxos: BTreeSet<OutPoint>,
@@ -290,7 +290,7 @@ impl Asset {
     /// Function creates a fungible asset-specific state transition (i.e. RGB-20
     /// schema-based) given an asset information, inputs and desired outputs
     pub fn transfer(
-        self,
+        &self,
         inputs: BTreeSet<OutPoint>,
         payment: EndpointValueMap,
         change: SealValueMap,
