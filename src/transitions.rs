@@ -22,6 +22,7 @@ use bitcoin::OutPoint;
 use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use rgb::secp256k1zkp;
+use seals::txout::ExplicitSeal;
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use super::{Asset, Issue};
@@ -116,9 +117,7 @@ impl Asset {
             owned_rights.insert(
                 OwnedRightType::Renomination.into(),
                 AssignmentVec::Declarative(vec![Assignment::Revealed {
-                    seal_definition: SealDefinition::TxOutpoint(
-                        outpoint.into(),
-                    ),
+                    seal_definition: outpoint.into(),
                     assigned_state: data::Void,
                 }]),
             );
@@ -128,9 +127,7 @@ impl Asset {
             owned_rights.insert(
                 OwnedRightType::BurnReplace.into(),
                 AssignmentVec::Declarative(vec![Assignment::Revealed {
-                    seal_definition: SealDefinition::TxOutpoint(
-                        outpoint.into(),
-                    ),
+                    seal_definition: outpoint.into(),
                     assigned_state: data::Void,
                 }]),
             );
@@ -254,8 +251,8 @@ impl Asset {
     pub fn epoch(
         &self,
         closing: OutPoint,
-        next_epoch: Option<SealPoint>,
-        burning_seal: Option<SealPoint>,
+        next_epoch: Option<ExplicitSeal>,
+        burning_seal: Option<ExplicitSeal>,
     ) -> Result<Transition, Error> {
         todo!()
     }
@@ -268,7 +265,7 @@ impl Asset {
         closing: OutPoint,
         burned_value: AtomicValue,
         burned_utxos: BTreeSet<OutPoint>,
-        next_burn: Option<SealPoint>,
+        next_burn: Option<ExplicitSeal>,
     ) -> Result<Transition, Error> {
         todo!()
     }
@@ -281,7 +278,7 @@ impl Asset {
         closing: OutPoint,
         burned_value: AtomicValue,
         burned_utxos: BTreeSet<OutPoint>,
-        next_burn: Option<SealPoint>,
+        next_burn: Option<ExplicitSeal>,
         allocations: AllocationValueVec,
     ) -> Result<Transition, Error> {
         todo!()

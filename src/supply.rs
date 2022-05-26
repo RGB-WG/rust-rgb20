@@ -20,6 +20,7 @@ use std::convert::TryFrom;
 
 use bitcoin::{OutPoint, Txid};
 use rgb::prelude::*;
+use seals::txout::TxoSeal;
 
 use crate::asset::Error;
 use crate::schema::{FieldType, OwnedRightType, TransitionType};
@@ -214,7 +215,7 @@ impl Issue {
                 BTreeMap::new(),
                 |mut assignments, (index, (seal, amount))| {
                     let item = assignments
-                        .entry(OutPoint::from(seal.to_outpoint_reveal(witness)))
+                        .entry(seal.outpoint_or(witness))
                         .or_insert((0, vec![]));
                     item.0 += amount.value;
                     item.1.push(index as u16);
@@ -384,15 +385,13 @@ impl Epoch {
             .map_err(|_| Error::EpochSealConfidential(id))?
             .first()
             .copied()
-            .map(|seal| seal.to_outpoint_reveal(witness))
-            .map(OutPoint::from);
+            .map(|seal| seal.outpoint_or(witness));
         let seal = transition
             .revealed_seals_by_type(OwnedRightType::BurnReplace.into())
             .map_err(|_| Error::BurnSealConfidential(id))?
             .first()
             .copied()
-            .map(|seal| seal.to_outpoint_reveal(witness))
-            .map(OutPoint::from);
+            .map(|seal| seal.outpoint_or(witness));
 
         Ok(Epoch {
             node_id: id,
@@ -527,8 +526,7 @@ impl BurnReplace {
             .map_err(|_| Error::BurnSealConfidential(id))?
             .first()
             .copied()
-            .map(|seal| seal.to_outpoint_reveal(witness))
-            .map(OutPoint::from);
+            .map(|seal| seal.outpoint_or(witness));
 
         let does_replacement = transition.transition_type()
             == TransitionType::BurnAndReplace as rgb::schema::TransitionType;

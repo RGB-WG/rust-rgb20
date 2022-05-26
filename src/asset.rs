@@ -25,7 +25,7 @@ use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
 use lnpbp::chain::Chain;
 use rgb::prelude::*;
-use rgb::seal::WitnessVoutError;
+use seals::txout::{TxoSeal, WitnessVoutError};
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use crate::{
@@ -204,7 +204,10 @@ impl Asset {
     ///     returned by this function will not match the valid data
     #[inline]
     pub fn ricardian_contract(&self) -> Option<&str> {
-        self.active_nomination().ricardian_contract().as_ref().map(String::as_str)
+        self.active_nomination()
+            .ricardian_contract()
+            .as_ref()
+            .map(String::as_str)
     }
 
     /// Current decimal precision of the asset value
@@ -475,25 +478,22 @@ impl TryFrom<Genesis> for Asset {
         for assignment in
             genesis.owned_rights_by_type(OwnedRightType::Assets.into())
         {
-            assignment
-                .to_value_assignment_vec()
-                .into_iter()
-                .enumerate()
-                .for_each(|(index, assign)| {
-                    if let Assignment::Revealed {
-                        seal_definition:
-                            seal::Revealed::TxOutpoint(outpoint_reveal),
+            for (index, assign) in
+                assignment.to_value_assignment_vec().into_iter().enumerate()
+            {
+                if let Assignment::Revealed {
+                    seal_definition: outpoint_reveal,
+                    assigned_state,
+                } = assign
+                {
+                    known_allocations.push(Allocation::with(
+                        node_id,
+                        index as u16,
+                        outpoint_reveal.outpoint().ok_or(Error::GenesisSeal)?,
                         assigned_state,
-                    } = assign
-                    {
-                        known_allocations.push(Allocation::with(
-                            node_id,
-                            index as u16,
-                            outpoint_reveal.into(),
-                            assigned_state,
-                        ))
-                    }
-                });
+                    ))
+                }
+            }
         }
         Ok(Asset {
             genesis: genesis.to_string(),
@@ -630,7 +630,7 @@ impl TryFrom<Consignment> for Asset {
                     .enumerate()
                 {
                     asset.add_allocation(
-                        seal.to_outpoint_reveal(witness).into(),
+                        seal.outpoint_or(witness),
                         transaction.node_id(),
                         index as u16,
                         state,
