@@ -115,7 +115,7 @@ impl Asset {
                 OwnedRightType::Renomination.into(),
                 AssignmentVec::Declarative(vec![Assignment::Revealed {
                     seal_definition: outpoint.into(),
-                    assigned_state: data::Void,
+                    assigned_state: data::Void(),
                 }]),
             );
         }
@@ -125,7 +125,7 @@ impl Asset {
                 OwnedRightType::BurnReplace.into(),
                 AssignmentVec::Declarative(vec![Assignment::Revealed {
                     seal_definition: outpoint.into(),
-                    assigned_state: data::Void,
+                    assigned_state: data::Void(),
                 }]),
             );
         }

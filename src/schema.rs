@@ -319,15 +319,15 @@ pub fn schema() -> Schema {
             // Rational: if we will use just 26 letters of English alphabet (and
             // we are not limited by them), we will have 26^8 possible tickers,
             // i.e. > 208 trillions, which is sufficient amount
-            FieldType::Ticker => DataFormat::String(8),
-            FieldType::Name => DataFormat::String(256),
+            FieldType::Ticker => DataFormat::UniString(8),
+            FieldType::Name => DataFormat::UniString(256),
             // Contract text may contain URL, text or text representation of
             // Ricardian contract, up to 64kb. If the contract doesn't fit, a
             // double SHA256 hash and URL should be used instead, pointing to
             // the full contract text, where hash must be represented by a
             // hexadecimal string, optionally followed by `\n` and text URL
             // TODO #33: Consider using data container instead of the above ^^^
-            FieldType::RicardianContract => DataFormat::String(core::u16::MAX),
+            FieldType::RicardianContract => DataFormat::UniString(core::u16::MAX),
             FieldType::Precision => DataFormat::Unsigned(Bits::Bit8, 0, 18u128),
             // We need this b/c allocated amounts are hidden behind Pedersen
             // commitments
@@ -339,7 +339,7 @@ pub fn schema() -> Schema {
             // even existed; so we prohibit all the dates before RGB release
             // This timestamp is equal to 10/10/2020 @ 2:37pm (UTC)
             FieldType::Timestamp => DataFormat::Integer(Bits::Bit64, 1602340666, core::i64::MAX as i128),
-            FieldType::HistoryProof => DataFormat::Bytes(core::u16::MAX),
+            FieldType::HistoryProof => DataFormat::ByteString(core::u16::MAX),
             FieldType::HistoryProofFormat => DataFormat::Enum(
                 HistoryProofFormat::all()
                     .into_iter()
@@ -347,7 +347,7 @@ pub fn schema() -> Schema {
                     .collect()
             ),
             // TODO: Make it byte format embedding script
-            FieldType::BurnUtxo => DataFormat::TxOutPoint
+            FieldType::BurnUtxo => DataFormat::FixedBytes(32)
         },
         owned_right_types: type_map! {
             OwnedRightType::Inflation => StateSchema {
@@ -537,15 +537,15 @@ pub fn subschema() -> Schema {
             // Rational: if we will use just 26 letters of English alphabet (and
             // we are not limited by them), we will have 26^8 possible tickers,
             // i.e. > 208 trillions, which is sufficient amount
-            FieldType::Ticker => DataFormat::String(8),
-            FieldType::Name => DataFormat::String(256),
+            FieldType::Ticker => DataFormat::UniString(8),
+            FieldType::Name => DataFormat::UniString(256),
             // Contract text may contain URL, text or text representation of
             // Ricardian contract, up to 64kb. If the contract doesn't fit, a
             // double SHA256 hash and URL should be used instead, pointing to
             // the full contract text, where hash must be represented by a
             // hexadecimal string, optionally followed by `\n` and text URL
             // TODO #33: Consider using data container instead of the above ^^^
-            FieldType::RicardianContract => DataFormat::String(core::u16::MAX),
+            FieldType::RicardianContract => DataFormat::UniString(core::u16::MAX),
             FieldType::Precision => DataFormat::Unsigned(Bits::Bit8, 0, 18u128),
             // We need this b/c allocated amounts are hidden behind Pedersen
             // commitments
@@ -557,7 +557,7 @@ pub fn subschema() -> Schema {
             // even existed; so we prohibit all the dates before RGB release
             // This timestamp is equal to 10/10/2020 @ 2:37pm (UTC)
             FieldType::Timestamp => DataFormat::Integer(Bits::Bit64, 1602340666, core::i64::MAX as i128),
-            FieldType::BurnUtxo => DataFormat::TxOutPoint
+            FieldType::BurnUtxo => DataFormat::FixedBytes(32)
         },
         owned_right_types: type_map! {
             OwnedRightType::Inflation => StateSchema {
