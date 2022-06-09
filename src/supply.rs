@@ -13,14 +13,14 @@
 
 //! Asset supply information & management
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::convert::TryFrom;
 
 use bitcoin::{OutPoint, Txid};
 use rgb::prelude::*;
 use seals::txout::TxoSeal;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 use crate::asset::Error;
 use crate::schema::{FieldType, OwnedRightType, TransitionType};
@@ -63,7 +63,7 @@ pub enum SupplyMeasure {
     Display,
     Default,
     StrictEncode,
-    StrictDecode,
+    StrictDecode
 )]
 #[cfg_attr(
     feature = "serde",
@@ -150,7 +150,7 @@ impl Supply {
     Debug,
     Display,
     StrictEncode,
-    StrictDecode,
+    StrictDecode
 )]
 #[cfg_attr(
     feature = "serde",
@@ -235,24 +235,18 @@ impl Issue {
 
     /// Detects if the issue is primary (i.e. defined as a part of genesis data)
     #[inline]
-    pub fn is_primary(&self) -> bool {
-        self.closes.is_empty()
-    }
+    pub fn is_primary(&self) -> bool { self.closes.is_empty() }
 
     /// Detects if the issue is secondary (i.e. created with inflation state
     /// transition)
     #[inline]
-    pub fn is_secondary(&self) -> bool {
-        !self.closes.is_empty()
-    }
+    pub fn is_secondary(&self) -> bool { !self.closes.is_empty() }
 }
 
 impl TryFrom<Genesis> for Issue {
     type Error = Error;
 
-    fn try_from(genesis: Genesis) -> Result<Self, Self::Error> {
-        Issue::try_from(&genesis)
-    }
+    fn try_from(genesis: Genesis) -> Result<Self, Self::Error> { Issue::try_from(&genesis) }
 }
 
 impl TryFrom<&Genesis> for Issue {
@@ -313,7 +307,7 @@ impl TryFrom<&Genesis> for Issue {
     Hash,
     Display,
     StrictEncode,
-    StrictDecode,
+    StrictDecode
 )]
 #[cfg_attr(
     feature = "serde",
@@ -424,7 +418,7 @@ impl Epoch {
     Hash,
     Display,
     StrictEncode,
-    StrictDecode,
+    StrictDecode
 )]
 #[cfg_attr(
     feature = "serde",

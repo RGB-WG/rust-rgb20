@@ -11,12 +11,12 @@
 // along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 
 use bitcoin::{OutPoint, Txid};
 use rgb::{ContractId, Genesis, Node, NodeId};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 use crate::asset::Error;
 use crate::schema::{self, FieldType};
@@ -39,9 +39,7 @@ use crate::schema::{self, FieldType};
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[derive(
-    Clone, Getters, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Display,
-)]
+#[derive(Clone, Getters, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Display)]
 #[display("{ticker}")]
 #[derive(StrictEncode, StrictDecode)]
 pub struct Nomination {
@@ -61,9 +59,7 @@ pub struct Nomination {
 impl TryFrom<Genesis> for Nomination {
     type Error = Error;
 
-    fn try_from(genesis: Genesis) -> Result<Self, Self::Error> {
-        Nomination::try_from(&genesis)
-    }
+    fn try_from(genesis: Genesis) -> Result<Self, Self::Error> { Nomination::try_from(&genesis) }
 }
 
 impl TryFrom<&Genesis> for Nomination {
@@ -106,9 +102,7 @@ impl TryFrom<&Genesis> for Nomination {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[derive(
-    Clone, Getters, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Display,
-)]
+#[derive(Clone, Getters, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Display)]
 #[display("{no}:{node_id}")]
 #[derive(StrictEncode, StrictDecode)]
 pub struct Renomination {

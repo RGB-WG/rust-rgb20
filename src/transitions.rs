@@ -14,11 +14,11 @@
 //! High-level RGB20 API performing asset issuance, transfers and other
 //! asset-management operations
 
-use chrono::Utc;
 use std::collections::{BTreeMap, BTreeSet};
 use std::convert::TryFrom;
 
 use bitcoin::OutPoint;
+use chrono::Utc;
 use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use rgb::secp256k1zkp;
@@ -28,9 +28,7 @@ use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use super::{Asset, Issue};
 
 /// Errors happening during construction of RGB-20 asset state transitions
-#[derive(
-    Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display, Error,
-)]
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display, Error)]
 #[display(doc_comments)]
 pub enum Error {
     /// input {0} is not related to the contract
@@ -103,8 +101,7 @@ impl Asset {
                 empty![],
             ),
         );
-        metadata
-            .insert(FieldType::IssuedSupply.into(), field!(U64, issued_supply));
+        metadata.insert(FieldType::IssuedSupply.into(), field!(U64, issued_supply));
 
         if !inflation.is_empty() {
             owned_rights.insert(
@@ -141,8 +138,7 @@ impl Asset {
             bset![],
         );
 
-        let asset = Asset::try_from(genesis.clone())
-            .expect("RGB20 asset genesis parser is broken");
+        let asset = Asset::try_from(genesis.clone()).expect("RGB20 asset genesis parser is broken");
 
         (asset, genesis)
     }

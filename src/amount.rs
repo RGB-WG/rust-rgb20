@@ -25,34 +25,19 @@
 //! floating point amount with `*_amount` suffix, and reserve `*_value` suffix
 //! for methods returning atomic value.
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 use std::ops::{Add, AddAssign};
 
 use rgb::AtomicValue;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Representation of the float asset amount after dividing asset value (see
 /// [`AtomicValue`]) on the asset decimal precision exponential.
 pub type FractionalAmount = f64;
 
 /// Accounting amount keeps track of the asset precision
-#[derive(
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Debug,
-    Display,
-    Default,
-    StrictEncode,
-    StrictDecode,
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(Serialize, Deserialize),
-    serde(crate = "serde_crate")
-)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Display, Default, StrictEncode, StrictDecode)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(crate = "serde_crate"))]
 #[display("{0}~{1}")]
 pub struct PreciseAmount(AtomicValue, u8);
 
@@ -87,31 +72,20 @@ impl PreciseAmount {
         fractional_amount: FractionalAmount,
         decimal_precision: u8,
     ) -> AtomicValue {
-        PreciseAmount::from_fractional_amount(
-            fractional_amount,
-            decimal_precision,
-        )
-        .atomic_value()
+        PreciseAmount::from_fractional_amount(fractional_amount, decimal_precision).atomic_value()
     }
 
     /// Converts atomic value into a floating-point fractional amount using the
     /// provided decimal precision
     #[inline]
-    pub fn transmutate_into(
-        atomic_value: AtomicValue,
-        decimal_precision: u8,
-    ) -> FractionalAmount {
-        PreciseAmount::from_atomic_value(atomic_value, decimal_precision)
-            .fractional_amount()
+    pub fn transmutate_into(atomic_value: AtomicValue, decimal_precision: u8) -> FractionalAmount {
+        PreciseAmount::from_atomic_value(atomic_value, decimal_precision).fractional_amount()
     }
 
     /// Constructs [`PreciseAmount`] from atomic value and decimal precision
     /// data
     #[inline]
-    pub fn from_atomic_value(
-        atomic_value: AtomicValue,
-        decimal_precision: u8,
-    ) -> Self {
+    pub fn from_atomic_value(atomic_value: AtomicValue, decimal_precision: u8) -> Self {
         Self(atomic_value, decimal_precision)
     }
 
@@ -122,8 +96,7 @@ impl PreciseAmount {
         fractional_amount: FractionalAmount,
         decimal_precision: u8,
     ) -> Self {
-        let full = (fractional_amount.trunc() as u64)
-            * Self::DIVIDER[decimal_precision as usize];
+        let full = (fractional_amount.trunc() as u64) * Self::DIVIDER[decimal_precision as usize];
         let fract = fractional_amount.fract() as u64;
         Self(full + fract, decimal_precision)
     }
@@ -136,15 +109,11 @@ impl PreciseAmount {
 
     /// Returns atomic value
     #[inline]
-    pub fn atomic_value(&self) -> AtomicValue {
-        self.0
-    }
+    pub fn atomic_value(&self) -> AtomicValue { self.0 }
 
     /// Returns decimal precision
     #[inline]
-    pub fn decimal_precision(&self) -> u8 {
-        self.1
-    }
+    pub fn decimal_precision(&self) -> u8 { self.1 }
 }
 
 impl Add for PreciseAmount {

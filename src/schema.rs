@@ -15,10 +15,10 @@
 
 use std::str::FromStr;
 
+use rgb::schema::constants::*;
 use rgb::schema::{
-    constants::*, script, AssignmentAction, Bits, DataFormat,
-    DiscreteFiniteFieldFormat, GenesisSchema, HistoryProofFormat, Occurrences,
-    Schema, SchemaId, StateFormat, StateSchema, TransitionAction,
+    script, AssignmentAction, Bits, DataFormat, DiscreteFiniteFieldFormat, GenesisSchema,
+    HistoryProofFormat, Occurrences, Schema, SchemaId, StateFormat, StateSchema, TransitionAction,
     TransitionSchema,
 };
 use rgb::vm::embedded;
@@ -79,9 +79,7 @@ pub enum FieldType {
 
 impl From<FieldType> for rgb::schema::FieldType {
     #[inline]
-    fn from(ft: FieldType) -> Self {
-        ft as rgb::schema::FieldType
-    }
+    fn from(ft: FieldType) -> Self { ft as rgb::schema::FieldType }
 }
 
 /// Owned right types used by RGB20 schemata
@@ -109,9 +107,7 @@ pub enum OwnedRightType {
 
 impl From<OwnedRightType> for rgb::schema::OwnedRightType {
     #[inline]
-    fn from(t: OwnedRightType) -> Self {
-        t as rgb::schema::OwnedRightType
-    }
+    fn from(t: OwnedRightType) -> Self { t as rgb::schema::OwnedRightType }
 }
 
 /// State transition types defined by RGB20 schemata
@@ -146,9 +142,7 @@ pub enum TransitionType {
 
 impl From<TransitionType> for rgb::schema::TransitionType {
     #[inline]
-    fn from(t: TransitionType) -> Self {
-        t as rgb::schema::TransitionType
-    }
+    fn from(t: TransitionType) -> Self { t as rgb::schema::TransitionType }
 }
 
 /// Builds & returns complete RGB20 schema (root schema object)
@@ -610,11 +604,12 @@ pub fn subschema() -> Schema {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use lnpbp::bech32::Bech32DataString;
-    use strict_encoding::{StrictDecode, StrictEncode};
     use rgb::schema::SchemaVerify;
     use rgb::{FromBech32, ToBech32, Validity};
+    use strict_encoding::{StrictDecode, StrictEncode};
+
+    use super::*;
 
     #[test]
     fn schema_id() {
@@ -636,8 +631,8 @@ mod test {
         let bech32data = data.bech32_data_string();
         println!("{}", bech32data);
 
-        let schema20 = Schema::strict_deserialize(data)
-            .expect("RGB-20 schema deserialization failed");
+        let schema20 =
+            Schema::strict_deserialize(data).expect("RGB-20 schema deserialization failed");
 
         assert_eq!(schema(), schema20);
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
@@ -668,8 +663,8 @@ mod test {
 
         println!("{}", data);
 
-        let schema20 = Schema::from_bech32_str(&data)
-            .expect("RGB-20 schema deserialization failed");
+        let schema20 =
+            Schema::from_bech32_str(&data).expect("RGB-20 schema deserialization failed");
 
         assert_eq!(schema(), schema20);
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));

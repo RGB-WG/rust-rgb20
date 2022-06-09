@@ -13,24 +13,24 @@
 
 //! Data structures and APIs for working with RGB20 assets
 
-use chrono::{DateTime, NaiveDateTime, Utc};
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "serde")]
-use serde_with::{As, DisplayFromStr};
 use std::collections::BTreeMap;
 use std::convert::{TryFrom, TryInto};
 
 use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use seals::txout::{TxoSeal, WitnessVoutError};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+#[cfg(feature = "serde")]
+use serde_with::{As, DisplayFromStr};
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use crate::{
-    BurnReplace, Epoch, FractionalAmount, Issue, Nomination, PreciseAmount,
-    Renomination, Supply, SupplyMeasure,
+    BurnReplace, Epoch, FractionalAmount, Issue, Nomination, PreciseAmount, Renomination, Supply,
+    SupplyMeasure,
 };
 
 /// Errors generated during RGB20 asset information parsing from the underlying
@@ -100,9 +100,7 @@ pub enum Error {
     derive(Serialize, Deserialize),
     serde(crate = "serde_crate", rename_all = "camelCase")
 )]
-#[derive(
-    Clone, Getters, PartialEq, Debug, Display, StrictEncode, StrictDecode,
-)]
+#[derive(Clone, Getters, PartialEq, Debug, Display, StrictEncode, StrictDecode)]
 #[display("{genesis_nomination} ({id})")]
 pub struct Asset {
     /// Bech32-representation of the asset genesis
@@ -177,9 +175,7 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn ticker(&self) -> &str {
-        &self.active_nomination().ticker()
-    }
+    pub fn ticker(&self) -> &str { &self.active_nomination().ticker() }
 
     /// Current asset name
     ///
@@ -190,9 +186,7 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn name(&self) -> &str {
-        self.active_nomination().ticker()
-    }
+    pub fn name(&self) -> &str { self.active_nomination().ticker() }
 
     /// Current version of the asset contract, represented in Ricardian form
     ///
@@ -219,34 +213,24 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn decimal_precision(&self) -> u8 {
-        *self.active_nomination().decimal_precision()
-    }
+    pub fn decimal_precision(&self) -> u8 { *self.active_nomination().decimal_precision() }
 
     /// Returns information (in atomic value units) about specific measure of
     /// the asset supply, if known, or `None` otherwise
-    pub fn precise_supply(
-        &self,
-        measure: SupplyMeasure,
-    ) -> Option<AtomicValue> {
+    pub fn precise_supply(&self, measure: SupplyMeasure) -> Option<AtomicValue> {
         Some(match measure {
             SupplyMeasure::KnownCirculating => *self.supply.known_circulating(),
-            SupplyMeasure::TotalCirculating => {
-                match self.supply.total_circulating() {
-                    None => return None,
-                    Some(supply) => supply,
-                }
-            }
+            SupplyMeasure::TotalCirculating => match self.supply.total_circulating() {
+                None => return None,
+                Some(supply) => supply,
+            },
             SupplyMeasure::IssueLimit => *self.supply.issue_limit(),
         })
     }
 
     /// Returns information in form of a float number about specific measure of
     /// the asset supply, if known, or [`f64::NAN`] otherwise
-    pub fn fractional_supply(
-        &self,
-        measure: SupplyMeasure,
-    ) -> FractionalAmount {
+    pub fn fractional_supply(&self, measure: SupplyMeasure) -> FractionalAmount {
         let value = match self.precise_supply(measure) {
             None => return FractionalAmount::NAN,
             Some(supply) => supply,
@@ -284,9 +268,7 @@ impl Asset {
     /// for filtering UTXOs owned by the current wallet. The returned value is
     /// in atomic units (see [`AtomicValue`]
     pub fn known_filtered_value<F>(&self, filter: F) -> AtomicValue
-    where
-        F: Fn(&Allocation) -> bool,
-    {
+    where F: Fn(&Allocation) -> bool {
         self.known_allocations
             .iter()
             .filter(|allocation| filter(*allocation))
@@ -300,12 +282,7 @@ impl Asset {
         self.known_allocations
             .iter()
             .map(Allocation::value)
-            .map(|atomic| {
-                PreciseAmount::transmutate_into(
-                    atomic,
-                    self.decimal_precision(),
-                )
-            })
+            .map(|atomic| PreciseAmount::transmutate_into(atomic, self.decimal_precision()))
             .sum()
     }
 
@@ -313,19 +290,12 @@ impl Asset {
     /// for filtering UTXOs owned by the current wallet. The returned amount is
     /// a floating point number (see [`FractionalAmount`])
     pub fn known_filtered_amount<F>(&self, filter: F) -> FractionalAmount
-    where
-        F: Fn(&Allocation) -> bool,
-    {
+    where F: Fn(&Allocation) -> bool {
         self.known_allocations
             .iter()
             .filter(|allocation| filter(*allocation))
             .map(Allocation::value)
-            .map(|atomic| {
-                PreciseAmount::transmutate_into(
-                    atomic,
-                    self.decimal_precision(),
-                )
-            })
+            .map(|atomic| PreciseAmount::transmutate_into(atomic, self.decimal_precision()))
             .sum()
     }
 
@@ -333,9 +303,7 @@ impl Asset {
     /// up to specific amount.
     ///
     /// NB: Not of all inflation controlling points may be known
-    pub fn known_inflation(
-        &self,
-    ) -> BTreeMap<OutPoint, (AtomicValue, Vec<u16>)> {
+    pub fn known_inflation(&self) -> BTreeMap<OutPoint, (AtomicValue, Vec<u16>)> {
         let mut inflation_list = BTreeMap::new();
         for issue in self.known_issues() {
             for (seal, data) in issue.inflation_assignments() {
@@ -411,20 +379,11 @@ impl Asset {
             .seals_closed_with(id, OwnedRightType::OpenEpoch, witness)?
             .into_iter()
             .next()
-            .ok_or(Error::Inconsistency(
-                rgb::ConsistencyError::NoSealsClosed(
-                    OwnedRightType::OpenEpoch.into(),
-                    id,
-                ),
-            ))?;
-        let epoch = Epoch::with(
-            self.id,
-            no,
-            closed_seal,
-            transition,
-            operations,
-            witness,
-        )?;
+            .ok_or(Error::Inconsistency(rgb::ConsistencyError::NoSealsClosed(
+                OwnedRightType::OpenEpoch.into(),
+                id,
+            )))?;
+        let epoch = Epoch::with(self.id, no, closed_seal, transition, operations, witness)?;
         self.epochs.insert(no as usize, epoch);
         Ok(())
     }
@@ -445,9 +404,7 @@ impl TryFrom<Genesis> for Asset {
         let mut issue_limit = 0;
 
         // Check if issue limit can be known
-        for assignment in
-            genesis.owned_rights_by_type(OwnedRightType::Inflation.into())
-        {
+        for assignment in genesis.owned_rights_by_type(OwnedRightType::Inflation.into()) {
             for state in assignment.to_data_assignment_vec() {
                 match state {
                     Assignment::Revealed { assigned_state, .. }
@@ -475,12 +432,8 @@ impl TryFrom<Genesis> for Asset {
         let issue = Issue::try_from(&genesis)?;
         let node_id = NodeId::from_inner(genesis.contract_id().into_inner());
         let mut known_allocations = Vec::<Allocation>::new();
-        for assignment in
-            genesis.owned_rights_by_type(OwnedRightType::Assets.into())
-        {
-            for (index, assign) in
-                assignment.to_value_assignment_vec().into_iter().enumerate()
-            {
+        for assignment in genesis.owned_rights_by_type(OwnedRightType::Assets.into()) {
+            for (index, assign) in assignment.to_value_assignment_vec().into_iter().enumerate() {
                 if let Assignment::Revealed {
                     seal_definition: outpoint_reveal,
                     assigned_state,
@@ -536,10 +489,7 @@ impl TryFrom<Consignment> for Asset {
             TransitionType::Burn.into(),
         ]) {
             let mut ops = consignment
-                .chain_iter(
-                    transition.node_id(),
-                    OwnedRightType::BurnReplace.into(),
-                )
+                .chain_iter(transition.node_id(), OwnedRightType::BurnReplace.into())
                 .collect::<Vec<_>>();
             ops.reverse();
             if let Some((epoch, _)) = ops.pop() {
@@ -548,19 +498,13 @@ impl TryFrom<Consignment> for Asset {
                 for (no, (transition, witness)) in ops.into_iter().enumerate() {
                     let id = transition.node_id();
                     let closed_seal = consignment
-                        .seals_closed_with(
-                            id,
-                            OwnedRightType::BurnReplace,
-                            witness,
-                        )?
+                        .seals_closed_with(id, OwnedRightType::BurnReplace, witness)?
                         .into_iter()
                         .next()
-                        .ok_or(Error::Inconsistency(
-                            rgb::ConsistencyError::NoSealsClosed(
-                                OwnedRightType::BurnReplace.into(),
-                                id,
-                            ),
-                        ))?;
+                        .ok_or(Error::Inconsistency(rgb::ConsistencyError::NoSealsClosed(
+                            OwnedRightType::BurnReplace.into(),
+                            id,
+                        )))?;
                     operations.push(BurnReplace::with(
                         asset.id,
                         epoch_id,
@@ -581,10 +525,7 @@ impl TryFrom<Consignment> for Asset {
             .next();
         if let Some(epoch_transition) = epoch_transition {
             let mut chain = consignment
-                .chain_iter(
-                    epoch_transition.node_id(),
-                    OwnedRightType::OpenEpoch.into(),
-                )
+                .chain_iter(epoch_transition.node_id(), OwnedRightType::OpenEpoch.into())
                 .collect::<Vec<_>>();
             chain.reverse();
             for (no, (transition, witness)) in chain.into_iter().enumerate() {
@@ -620,9 +561,7 @@ impl TryFrom<Consignment> for Asset {
             TransitionType::Transfer.into(),
             TransitionType::RightsSplit.into(),
         ]) {
-            for assignments in
-                transaction.owned_rights_by_type(OwnedRightType::Assets.into())
-            {
+            for assignments in transaction.owned_rights_by_type(OwnedRightType::Assets.into()) {
                 for (index, (seal, state)) in assignments
                     .to_value_assignment_vec()
                     .into_iter()
