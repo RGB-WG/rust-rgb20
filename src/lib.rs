@@ -36,6 +36,8 @@ extern crate amplify;
 extern crate strict_encoding;
 #[macro_use]
 extern crate rgb;
+#[macro_use]
+extern crate stens;
 
 #[cfg(feature = "serde")]
 extern crate serde_crate as serde;
