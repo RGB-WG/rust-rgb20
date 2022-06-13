@@ -235,9 +235,10 @@ impl Asset {
         let transition = Transition::with(
             TransitionType::Issue,
             metadata.into(),
-            parent,
+            empty!(),
             owned_rights.into(),
-            bset!().into(),
+            empty!(),
+            parent,
         );
 
         Ok(transition)
@@ -330,10 +331,11 @@ impl Asset {
 
         let transition = Transition::with(
             TransitionType::Transfer,
-            type_map!().into(),
-            parent,
+            empty!(),
+            empty!(),
             assignments.into(),
-            bset!().into(),
+            empty!(),
+            parent,
         );
 
         Ok(transition)
