@@ -17,6 +17,7 @@ use bitcoin::{OutPoint, Txid};
 use rgb::{ContractId, Genesis, Node, NodeId};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use stens::AsciiString;
 
 use crate::asset::Error;
 use crate::schema::{self, FieldType};
@@ -44,10 +45,10 @@ use crate::schema::{self, FieldType};
 #[derive(StrictEncode, StrictDecode)]
 pub struct Nomination {
     /// Asset ticker, up to 8 characters
-    ticker: String,
+    ticker: AsciiString,
 
     /// Full asset name
-    name: String,
+    name: AsciiString,
 
     /// Text of Ricardian contract
     ricardian_contract: Option<String>,
@@ -73,17 +74,17 @@ impl TryFrom<&Genesis> for Nomination {
 
         Ok(Nomination {
             ticker: genesis_meta
-                .string(FieldType::Ticker)
+                .ascii_string(FieldType::Ticker)
                 .first()
                 .ok_or(Error::UnsatisfiedSchemaRequirement)?
                 .clone(),
             name: genesis_meta
-                .string(FieldType::Name)
+                .ascii_string(FieldType::Name)
                 .first()
                 .ok_or(Error::UnsatisfiedSchemaRequirement)?
                 .clone(),
             ricardian_contract: genesis_meta
-                .string(FieldType::RicardianContract)
+                .unicode_string(FieldType::RicardianContract)
                 .first()
                 .cloned(),
             decimal_precision: *genesis_meta

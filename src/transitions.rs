@@ -23,6 +23,7 @@ use lnpbp::chain::Chain;
 use rgb::prelude::*;
 use rgb::secp256k1zkp;
 use seals::txout::ExplicitSeal;
+use stens::AsciiString;
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use super::{Asset, Issue};
@@ -65,8 +66,8 @@ impl Asset {
     /// structure parsed from it.
     pub fn issue(
         chain: Chain,
-        ticker: String,
-        name: String,
+        ticker: AsciiString,
+        name: AsciiString,
         description: Option<String>,
         precision: u8,
         allocations: OutpointValueVec,
@@ -76,15 +77,15 @@ impl Asset {
     ) -> (Asset, Genesis) {
         let now = Utc::now().timestamp();
         let mut metadata = type_map! {
-            FieldType::Ticker => field!(String, ticker.to_uppercase()),
-            FieldType::Name => field!(String, name),
+            FieldType::Ticker => field!(AsciiString, ticker),
+            FieldType::Name => field!(AsciiString, name),
             FieldType::Precision => field!(U8, precision),
             FieldType::Timestamp => field!(I64, now)
         };
         if let Some(description) = description {
             metadata.insert(
                 FieldType::RicardianContract.into(),
-                field!(String, description),
+                field!(UnicodeString, description),
             );
         }
 
