@@ -13,8 +13,6 @@
 
 use std::str::FromStr;
 
-use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
-
 use rgb::schema::{
     DiscreteFiniteFieldFormat, GenesisSchema, Occurrences, Schema, SchemaId, StateSchema,
     TransitionSchema,
@@ -22,6 +20,7 @@ use rgb::schema::{
 use rgb::script::OverrideRules;
 use rgb::vm::embedded::constants::*;
 use rgb::ValidationScript;
+use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
 pub const SCHEMA_ID_BECH32: &'static str =

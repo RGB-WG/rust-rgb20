@@ -11,19 +11,17 @@
 
 #[macro_use]
 extern crate clap;
-#[macro_use]
-extern crate amplify;
 extern crate serde_crate as serde;
 
 use clap::Parser;
 
 #[derive(Parser, Clone, Debug)]
 #[clap(
-name = "rgb",
-bin_name = "rgb",
-author,
-version,
-about = "Command-line tool for working with RGB smart contracts"
+    name = "rgb",
+    bin_name = "rgb",
+    author,
+    version,
+    about = "Command-line tool for working with RGB smart contracts"
 )]
 pub struct Opts {
     /// Command to execute
@@ -37,9 +35,7 @@ pub enum Command {}
 fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
-    match opts.command {
-
-    }
+    match opts.command {}
 
     Ok(())
 }

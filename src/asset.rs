@@ -26,10 +26,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::{As, DisplayFromStr};
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
-use crate::{
-    BurnReplace, Epoch,  Issue, Nomination,  Renomination, Supply,
-    SupplyMeasure,
-};
+use crate::{BurnReplace, Epoch, Issue, Nomination, Renomination, Supply, SupplyMeasure};
 
 /// Errors generated during RGB20 asset information parsing from the underlying
 /// genesis or consignment data
