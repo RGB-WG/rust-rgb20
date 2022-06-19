@@ -15,24 +15,24 @@
 
 use std::str::FromStr;
 
+use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
+
 use rgb::schema::{
-    DiscreteFiniteFieldFormat, GenesisSchema,
-    Occurrences, Schema, SchemaId, StateSchema,
+    DiscreteFiniteFieldFormat, GenesisSchema, Occurrences, Schema, SchemaId, StateSchema,
     TransitionSchema,
 };
 use rgb::script::OverrideRules;
-use rgb::ValidationScript;
 use rgb::vm::embedded::constants::*;
-use stens::{TypeSystem, StructField, PrimitiveType, TypeRef};
+use rgb::ValidationScript;
 
 /// Schema identifier for full RGB20 fungible asset
 pub const SCHEMA_ID_BECH32: &'static str =
-    "sch1rw6q0s4ynl4k5nmk4u2q25dag4409t7882pq4n6n7ywdrhp4f6cqfaf4xw";
+    "rgbsh15xhulxp3lqnsucradxu6tu2y3sezhy5k9nwtfwjkpq0t72zn465skh7jnz";
 
 /// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
 /// replace operations
 pub const SUBSCHEMA_ID_BECH32: &'static str =
-    "sch1zcdeayj9vpv852tx2sjzy7esyy82a6nk0gs854ktam24zxee42rqyzg95g";
+    "rgbsh1kmlp0fj9s5wvdagd6kelz8kmgnhq4zjqsck94868muf2apdetktqkkq2jj";
 
 /// Field types for RGB20 schemata
 ///
@@ -177,7 +177,7 @@ fn genesis() -> GenesisSchema {
             OwnedRightType::Assets => NoneOrMore,
             OwnedRightType::Renomination => NoneOrOnce
         },
-        public_rights: none!()
+        public_rights: none!(),
     }
 }
 
@@ -198,7 +198,7 @@ fn issue() -> TransitionSchema {
             OwnedRightType::OpenEpoch => NoneOrOnce,
             OwnedRightType::Assets => NoneOrMore
         },
-        public_rights: none!()
+        public_rights: none!(),
     }
 }
 
@@ -222,7 +222,7 @@ fn burn() -> TransitionSchema {
         owned_rights: type_map! {
             OwnedRightType::BurnReplace => NoneOrOnce
         },
-        public_rights: none!()
+        public_rights: none!(),
     }
 }
 
@@ -242,7 +242,7 @@ fn renomination() -> TransitionSchema {
         owned_rights: type_map! {
             OwnedRightType::Renomination => NoneOrOnce
         },
-        public_rights: none!()
+        public_rights: none!(),
     }
 }
 
@@ -370,7 +370,7 @@ pub fn schema() -> Schema {
         },
         public_right_types: none!(),
         script: ValidationScript::Embedded,
-        override_rules: OverrideRules::AllowAnyVm
+        override_rules: OverrideRules::AllowAnyVm,
     }
 }
 
@@ -475,18 +475,18 @@ pub fn subschema() -> Schema {
         },
         public_right_types: none!(),
         script: ValidationScript::Embedded,
-        override_rules: OverrideRules::AllowAnyVm
+        override_rules: OverrideRules::AllowAnyVm,
     }
 }
 
 #[cfg(test)]
 mod test {
-    use lnpbp::bech32::Bech32DataString;
-    use rgb::schema::SchemaVerify;
-    use rgb::{FromBech32, ToBech32, Validity};
+    use lnpbp_bech32::Bech32ZipString;
     use strict_encoding::{StrictDecode, StrictEncode};
 
     use super::*;
+    use crate::schema::SchemaVerify;
+    use crate::Validity;
 
     #[test]
     fn schema_id() {
@@ -495,7 +495,18 @@ mod test {
         assert_eq!(id.to_string(), SCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "sch1rw6q0s4ynl4k5nmk4u2q25dag4409t7882pq4n6n7ywdrhp4f6cqfaf4xw"
+            "rgbsh15xhulxp3lqnsucradxu6tu2y3sezhy5k9nwtfwjkpq0t72zn465skh7jnz"
+        );
+    }
+
+    #[test]
+    fn subschema_id() {
+        let id = subschema().schema_id();
+        println!("{}", id);
+        assert_eq!(id.to_string(), SUBSCHEMA_ID_BECH32);
+        assert_eq!(
+            id.to_string(),
+            "rgbsh1kmlp0fj9s5wvdagd6kelz8kmgnhq4zjqsck94868muf2apdetktqkkq2jj"
         );
     }
 
@@ -505,7 +516,7 @@ mod test {
             .strict_serialize()
             .expect("RGB-20 schema serialization failed");
 
-        let bech32data = data.bech32_data_string();
+        let bech32data = data.bech32_zip_string();
         println!("{}", bech32data);
 
         let schema20 =
@@ -515,44 +526,11 @@ mod test {
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
         assert_eq!(
             bech32data,
-            "data1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq2qqqqq\
-            pqgqqqsqpqqqypqqp8llupsqqqpqqfqgqqppqav0q2lqqqqqq8llllllllllal6qqqq\
-            pqqqqqqqqqqqqq8llllllllllllmqqqqpqqqqqqqqqqqqq8llllllllllllmzqpqkgq\
-            qtlllkvqqxyqqqqqsyqcyq5rqwzqfpg9scrgwpuzsqqgqqqqqpgqqqgqqsqqqqqqqqq\
-            qqqrllllllllllllcqqzssqqgqpqqqqqqqqqqqqq8llllllllllllszqqqqyqqqq92q\
-            qqqqq9tqqqqqqqqqqrqqqqqqyqqzqqpqqqsqqgqqgqqqqqpqqpsqqgqqyqqgqqpqqqs\
-            pgqqqyqqzqqyqqqsqqqqqyq2qqqqqrlllggqqqq0lla2qqqqqqgqqqqqqqqqqqqqqpc\
-            qqqqqqqqpqzssqqgqlllszq9pqqqqplllqqqqqqqqqqgqqpqqqqqqqqqpqqqsqqqqqy\
-            qqyqqqqqqsqqcqqqqqzqqpqqqsqqgqqyqqzqqpqqqqqqgqqqqqqqqqqzsqqqgq5qqqz\
-            qqpqqqspgqqqyq0llcrqzsqqqqqlll6zqqqqrlll2sqqqqqzqqqqqqsqqqzqqqqqqqq\
-            5yqqqqqpqz4qqqgqqyqqyq92qqqqqqgq4vqqqqqpqqqqqqqqqqq2yqqyqzcqqqgqqyq\
-            tzqqpqrlllvsqqqq0llanqqqsqqgqqyq2kqqpqqqsqqgq4vqqqqqpqqqqqqgqqqsqqq\
-            qqqqq2xqq9qzsqqqgqqyqtqqqpqqqspvgqqyq0llajqqqqplllkvqqzqqpqqqsp2cqq\
-            yqqzqqzqzssqqgqlll6kqqqqqqsqqqqqyqqqgqqqqqqqq8sqqqqqpgqqyqqqqqpqzsq\
-            qqqqlll6zqqqqrlll2sqqqqqzq9tqqqqplllq5qqzqqqqqqspgqqqqq0llapqqqqpll\
-            l4gqqqqqpqz4sqqqqlllsqqqpqqqrqqqqqqqqqqqqqqqq4f8w33"
-        );
-    }
-
-    #[test]
-    fn schema_bech32_encode() {
-        let data = schema().to_bech32_string();
-
-        println!("{}", data);
-
-        let schema20 =
-            Schema::from_bech32_str(&data).expect("RGB-20 schema deserialization failed");
-
-        assert_eq!(schema(), schema20);
-        assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
-        assert_eq!(
-            schema20.to_string(),
-            "schema1qxz4pkcdsvcqc0zzq22tu5p8vzz8uaue3ef82ymgllsg03cstkn3hfywr53\
-            zf2rsjjrhmwdmcnvge89xecgyzg6j6rtvdg8ygfvhd7eualhg49tc23qrd5tue4mzhd\
-            g7u5qx8mvghqsrz9ttjwjdjtklr7820vepwk9q56jfq34yy9l9prxxjh9dz55gr26dg\
-            dc3du6e7ddg2vecwd3rttcdg3xj9ef4vf0kwfrhqs4csrl0swvuhhrecgj24cpvhd47\
-            dx3hfhzcfx5ncel59crkymu2yfm53nmzcdasen5zmk4sqlvey6t0rrlcutdj7gl47jr\
-            udxdtlmttlx7gtv7uxh605pcw79337"
+            "z1qxz4zwcjsgcpqlgy7rf7z7qpd7jg23as58gsveeufmgquxkq3dus9clwfwppgw3y\
+            kdhn07mehdynpwcv2mv9l27r5579wp3xgxrw8tfuq8g5558vnzu4dk9uzvz68y92yvf\
+            ajk5pk3f73f0wfvuysxnjw8qs44pzphgx4kgzmgskas6nfgaj8kk3qe8cque4kxs504\
+            ujapue65adwxswq5y7ruflv6w8rree8k0qk9jy5llk4w5ekv9077mzza5h3cwjx0geq\
+            etruqmt8d4fllvsylc3mem2fju9htru38j8lhay557304elluqqlsesrx"
         );
     }
 
