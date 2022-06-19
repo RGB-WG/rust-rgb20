@@ -22,7 +22,7 @@ strict_encoding = "1.8.8"
 stens = "0.3.1"
 lnpbp = "0.7.0"
 bp-seals = "0.7.0"
-rgb-core = { version = "0.7.0-rc.1", features = ["wallet"] } # TODO: Remove walet feature once gates are fixed
+rgb-std = { version = "0.8.0-alpha.1", features = ["wallet"], git = "https://github.com/RGB-WG/rgb-std" }
 bitcoin = "0.28.1"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
 serde_with = { version = "1.8", features = ["hex"], optional = true }
@@ -32,4 +32,4 @@ url = "2.1"
 [features]
 default = []
 all = ["serde"]
-serde = ["serde_crate", "serde_with", "lnpbp/serde", "bitcoin/use-serde", "rgb-core/serde", "amplify/serde", "chrono/serde"]
+serde = ["serde_crate", "serde_with", "lnpbp/serde", "bitcoin/use-serde", "rgb-std/serde", "amplify/serde", "chrono/serde"]

@@ -104,9 +104,6 @@ pub enum Error {
 #[derive(Clone, Getters, PartialEq, Debug, Display, StrictEncode, StrictDecode)]
 #[display("{genesis_nomination} ({id})")]
 pub struct Asset {
-    /// Bech32-representation of the asset genesis
-    genesis: String,
-
     /// Asset ID, which is equal to Contract ID and genesis ID
     ///
     /// It can be used as a unique primary kep
@@ -348,7 +345,7 @@ impl Asset {
     /// from the [`Consignment`] using [`Asset::try_from`] method.
     fn add_issue(
         &mut self,
-        consignment: &Consignment,
+        consignment: &FullConsignment,
         transition: &Transition,
         witness: Txid,
     ) -> Result<(), Error> {
@@ -367,7 +364,7 @@ impl Asset {
     /// from the [`Consignment`] using [`Asset::try_from`] method.
     fn add_epoch(
         &mut self,
-        consignment: &Consignment,
+        consignment: &FullConsignment,
         transition: &Transition,
         no: usize,
         operations: Vec<BurnReplace>,
@@ -450,7 +447,6 @@ impl TryFrom<Genesis> for Asset {
             }
         }
         Ok(Asset {
-            genesis: genesis.to_string(),
             id: genesis.contract_id(),
             chain: genesis.chain().clone(),
             genesis_nomination: Nomination::try_from(&genesis)?,
@@ -476,10 +472,10 @@ impl TryFrom<Genesis> for Asset {
     }
 }
 
-impl TryFrom<Consignment> for Asset {
+impl TryFrom<FullConsignment> for Asset {
     type Error = Error;
 
-    fn try_from(consignment: Consignment) -> Result<Self, Self::Error> {
+    fn try_from(consignment: FullConsignment) -> Result<Self, Self::Error> {
         // 1. Parse genesis
         let mut asset: Asset = consignment.genesis.clone().try_into()?;
 
