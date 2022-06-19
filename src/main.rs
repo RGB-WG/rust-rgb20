@@ -17,11 +17,11 @@ use clap::Parser;
 
 #[derive(Parser, Clone, Debug)]
 #[clap(
-    name = "rgb",
-    bin_name = "rgb",
+    name = "rgb20",
+    bin_name = "rgb20",
     author,
     version,
-    about = "Command-line tool for working with RGB smart contracts"
+    about = "Command-line tool for working with RGB20 fungible assets"
 )]
 pub struct Opts {
     /// Command to execute
