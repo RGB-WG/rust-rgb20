@@ -11,8 +11,6 @@
 // along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use std::convert::TryFrom;
-
 use bitcoin::{OutPoint, Txid};
 use rgb::{ContractId, Genesis, Node, NodeId};
 #[cfg(feature = "serde")]

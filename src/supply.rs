@@ -14,7 +14,6 @@
 //! Asset supply information & management
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::convert::TryFrom;
 
 use bitcoin::{OutPoint, Txid};
 use rgb::prelude::*;

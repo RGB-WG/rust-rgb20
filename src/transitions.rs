@@ -15,7 +15,6 @@
 //! asset-management operations
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::convert::TryFrom;
 
 use bitcoin::OutPoint;
 use chrono::Utc;

@@ -14,7 +14,6 @@
 //! Data structures and APIs for working with RGB20 assets
 
 use std::collections::BTreeMap;
-use std::convert::{TryFrom, TryInto};
 
 use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
