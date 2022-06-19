@@ -1193,6 +1193,7 @@ dependencies = [
  "chrono",
  "clap",
  "lnpbp",
+ "lnpbp_bech32",
  "rgb-std",
  "serde",
  "serde_json",

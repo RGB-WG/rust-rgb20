@@ -479,11 +479,11 @@ pub fn subschema() -> Schema {
 #[cfg(test)]
 mod test {
     use lnpbp_bech32::Bech32ZipString;
+    use rgb::schema::SchemaVerify;
+    use rgb::Validity;
     use strict_encoding::{StrictDecode, StrictEncode};
 
     use super::*;
-    use crate::schema::SchemaVerify;
-    use crate::Validity;
 
     #[test]
     fn schema_id() {
