@@ -100,7 +100,7 @@ fn main() -> Result<(), String> {
                     map
                 },
             );
-            let (asset, genesis) = Asset::issue(
+            let (asset, contract) = Asset::issue(
                 opts.network,
                 ticker,
                 name,
@@ -114,14 +114,17 @@ fn main() -> Result<(), String> {
             eprintln!(
                 "{} {}\n",
                 "Contract ID:".bright_green(),
-                genesis.contract_id().to_string().bright_yellow()
+                contract.contract_id().to_string().bright_yellow()
             );
 
             eprintln!("{}", "Contract YAML:".bright_green());
-            eprintln!("{}", serde_yaml::to_string(&genesis).unwrap());
+            eprintln!("{}", serde_yaml::to_string(&contract.genesis).unwrap());
 
             eprintln!("{}", "Contract JSON:".bright_green());
-            println!("{}\n", serde_json::to_string(&genesis).unwrap());
+            println!("{}\n", serde_json::to_string(&contract.genesis).unwrap());
+
+            eprintln!("{}", "Contract source:".bright_green());
+            println!("{}\n", contract);
 
             eprintln!("{}", "Asset details:".bright_green());
             eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());

@@ -74,7 +74,7 @@ impl Asset {
         inflation: OutpointValueMap,
         renomination: Option<OutPoint>,
         epoch: Option<OutPoint>,
-    ) -> (Asset, Genesis) {
+    ) -> (Asset, Contract) {
         let now = Utc::now().timestamp();
         let mut metadata = type_map! {
             FieldType::Ticker => field!(AsciiString, ticker),
@@ -125,8 +125,10 @@ impl Asset {
             );
         }
 
+        let schema = schema::schema();
+
         let genesis = Genesis::with(
-            schema::schema().schema_id(),
+            schema.schema_id(),
             chain,
             metadata.into(),
             owned_rights,
@@ -135,7 +137,9 @@ impl Asset {
 
         let asset = Asset::try_from(genesis.clone()).expect("RGB20 asset genesis parser is broken");
 
-        (asset, genesis)
+        let contract = Contract::with(schema, None, genesis, empty!(), empty!(), empty!());
+
+        (asset, contract)
     }
 
     /// Performs secondary issue closing an inflation-controlling seal over

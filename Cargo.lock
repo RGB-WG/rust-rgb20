@@ -1175,7 +1175,7 @@ dependencies = [
 [[package]]
 name = "rgb-std"
 version = "0.8.0-alpha.1"
-source = "git+https://github.com/RGB-WG/rgb-std#c9016d201b69d11baa01ee03bc1bdde81225208a"
+source = "git+https://github.com/RGB-WG/rgb-std#10bf36cf4551436e479d9365a5f0efae72005808"
 dependencies = [
  "amplify",
  "bitcoin",
@@ -1442,9 +1442,9 @@ dependencies = [
 
 [[package]]
 name = "strict_encoding"
-version = "1.8.8"
+version = "1.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1bbb5109701ede3df3e20b82a134d601036f02b8b2f259965266a6a784cc749"
+checksum = "3379d91cf1a6dda3ad54629ae868f0dd65a8fb42fae697c94777253e795a12b3"
 dependencies = [
  "amplify",
  "bitcoin",
