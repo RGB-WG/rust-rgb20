@@ -17,6 +17,7 @@ use std::collections::BTreeMap;
 
 use bitcoin::OutPoint;
 use clap::Parser;
+use colored::Colorize;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::OutpointValue;
 use rgb20::Asset;
@@ -55,7 +56,7 @@ pub enum Command {
         description: Option<String>,
 
         /// Precision, i.e. number of digits reserved for fractional part
-        #[clap(short, long, default_value = "0")]
+        #[clap(short, long, default_value = "8")]
         precision: u8,
 
         /// Asset allocation, in form of <amount>@<txid>:<vout>
@@ -115,6 +116,21 @@ fn main() -> Result<(), String> {
                 renomination,
                 epoch,
             );
+
+            eprintln!(
+                "{} {}\n",
+                "Contract ID:".bright_green(),
+                genesis.contract_id().to_string().bright_yellow()
+            );
+
+            eprintln!("{}", "Contract YAML:".bright_green());
+            eprintln!("{}", serde_yaml::to_string(&genesis).unwrap());
+
+            eprintln!("{}", "Contract JSON:".bright_green());
+            println!("{}\n", serde_json::to_string(&genesis).unwrap());
+
+            eprintln!("{}", "Asset details:".bright_green());
+            eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
         }
     }
 
