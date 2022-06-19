@@ -20,6 +20,7 @@ use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
 use chrono::{DateTime, NaiveDateTime, Utc};
 use lnpbp::chain::Chain;
+use rgb::fungible::amount::{FractionalAmount, PreciseAmount};
 use rgb::prelude::*;
 use seals::txout::{TxoSeal, WitnessVoutError};
 #[cfg(feature = "serde")]
@@ -29,7 +30,7 @@ use serde_with::{As, DisplayFromStr};
 
 use super::schema::{self, FieldType, OwnedRightType, TransitionType};
 use crate::{
-    BurnReplace, Epoch, FractionalAmount, Issue, Nomination, PreciseAmount, Renomination, Supply,
+    BurnReplace, Epoch,  Issue, Nomination,  Renomination, Supply,
     SupplyMeasure,
 };
 
