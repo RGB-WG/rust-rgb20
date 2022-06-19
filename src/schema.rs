@@ -24,12 +24,12 @@ use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
 pub const SCHEMA_ID_BECH32: &'static str =
-    "rgbsh15xhulxp3lqnsucradxu6tu2y3sezhy5k9nwtfwjkpq0t72zn465skh7jnz";
+    "rgbsh1sdjzld72aj3fdq7qxmxtvn3ss09dwf02epzwnwxv4pejjkpf3tuqzcahgf";
 
 /// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
 /// replace operations
 pub const SUBSCHEMA_ID_BECH32: &'static str =
-    "rgbsh1kmlp0fj9s5wvdagd6kelz8kmgnhq4zjqsck94868muf2apdetktqkkq2jj";
+    "rgbsh1r30xaqt6qqd4g9z5m6m9c38ny00uad2afgzgpr8hfy5c4j5ll93qajhm5f";
 
 /// Field types for RGB20 schemata
 ///
@@ -444,7 +444,7 @@ pub fn subschema() -> Schema {
             OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
             OwnedRightType::OpenEpoch => StateSchema::Declarative,
             OwnedRightType::BurnReplace => StateSchema::Declarative,
-            OwnedRightType::Renomination => StateSchema::Declarative
+            OwnedRightType::Renomination => StateSchema::DataContainer
         },
         public_right_types: none!(),
         script: ValidationScript::Embedded,
@@ -468,7 +468,7 @@ mod test {
         assert_eq!(id.to_string(), SCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh15xhulxp3lqnsucradxu6tu2y3sezhy5k9nwtfwjkpq0t72zn465skh7jnz"
+            "rgbsh1sdjzld72aj3fdq7qxmxtvn3ss09dwf02epzwnwxv4pejjkpf3tuqzcahgf"
         );
     }
 
@@ -479,7 +479,7 @@ mod test {
         assert_eq!(id.to_string(), SUBSCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1kmlp0fj9s5wvdagd6kelz8kmgnhq4zjqsck94868muf2apdetktqkkq2jj"
+            "rgbsh1r30xaqt6qqd4g9z5m6m9c38ny00uad2afgzgpr8hfy5c4j5ll93qajhm5f"
         );
     }
 
@@ -499,19 +499,17 @@ mod test {
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
         assert_eq!(
             bech32data,
-            "z1qxz4zwcjsgcpqlgy7rf7z7qpd7jg23as58gsveeufmgquxkq3dus9clwfwppgw3y\
-            kdhn07mehdynpwcv2mv9l27r5579wp3xgxrw8tfuq8g5558vnzu4dk9uzvz68y92yvf\
-            ajk5pk3f73f0wfvuysxnjw8qs44pzphgx4kgzmgskas6nfgaj8kk3qe8cque4kxs504\
-            ujapue65adwxswq5y7ruflv6w8rree8k0qk9jy5llk4w5ekv9077mzza5h3cwjx0geq\
-            etruqmt8d4fllvsylc3mem2fju9htru38j8lhay557304elluqqlsesrx"
+            "z1qxz4zsgwsgcpq8z63qwrzlkqrl5uzfmcux3pwnrufmg3khqq8lnqht9m6vtx8g4p\
+            5jeuhnkw9sk4shqxy4mfwenl4e8cmqwfjr3hptv0gr9ry4zmw6tq466h5esrtnm9d7w\
+            gq8g5g6ghe0pxd9pjzf0tq3ddj8ws4wkgpx48cuf88g5mw0cqmu97y4m2e6z6zxp68a\
+            c6j5rj4kxgqj6lmx5j4tsqc9et3c00deayj6ck886p4rmfrw7fxu8xg336f32ragnt8\
+            lraqlvhzwrcjjc6zd8et9z0mmttlklgnyhlr75tmupvuc9p"
         );
     }
 
     #[test]
     fn subschema_verify() {
-        assert_eq!(
-            subschema().schema_verify(&schema()).validity(),
-            Validity::Valid
-        );
+        let status = subschema().schema_verify(&schema());
+        assert_eq!(status.validity(), Validity::Valid);
     }
 }
