@@ -17,6 +17,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use bitcoin::OutPoint;
 use chrono::Utc;
 use lnpbp::chain::Chain;
+use rgb::fungible::allocation::{
+    Allocation, AllocationMap, AllocationValueMap, AllocationValueVec, IntoSealValueMap,
+    OutpointValueMap, OutpointValueVec,
+};
 use rgb::prelude::*;
 use rgb::secp256k1zkp;
 use seals::txout::ExplicitSeal;

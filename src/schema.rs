@@ -478,7 +478,7 @@ pub fn subschema() -> Schema {
 
 #[cfg(test)]
 mod test {
-    use lnpbp_bech32::Bech32ZipString;
+    use lnpbp::bech32::Bech32ZipString;
     use rgb::schema::SchemaVerify;
     use rgb::Validity;
     use strict_encoding::{StrictDecode, StrictEncode};

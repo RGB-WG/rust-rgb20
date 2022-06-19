@@ -13,7 +13,14 @@
 extern crate clap;
 extern crate serde_crate as serde;
 
+use std::collections::BTreeMap;
+
+use bitcoin::OutPoint;
 use clap::Parser;
+use lnpbp::chain::Chain;
+use rgb::fungible::allocation::OutpointValue;
+use rgb20::Asset;
+use stens::AsciiString;
 
 #[derive(Parser, Clone, Debug)]
 #[clap(
@@ -24,18 +31,105 @@ use clap::Parser;
     about = "Command-line tool for working with RGB20 fungible assets"
 )]
 pub struct Opts {
+    /// Bitcoin network to use
+    #[clap(short, long, default_value = "testnet", env = "RGB_NETWORK")]
+    pub network: Chain,
+
     /// Command to execute
     #[clap(subcommand)]
     pub command: Command,
 }
 
 #[derive(Subcommand, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub enum Command {}
+pub enum Command {
+    Issue {
+        /// Asset ticker (up to 8 characters, always converted to uppercase)
+        #[clap(validator=ticker_validator)]
+        ticker: AsciiString,
+
+        /// Asset name (up to 32 characters)
+        name: AsciiString,
+
+        /// Asset description
+        #[clap(short, long)]
+        description: Option<String>,
+
+        /// Precision, i.e. number of digits reserved for fractional part
+        #[clap(short, long, default_value = "0")]
+        precision: u8,
+
+        /// Asset allocation, in form of <amount>@<txid>:<vout>
+        allocation: Vec<OutpointValue>,
+
+        /// Outputs controlling inflation (secondary issue);
+        /// in form of <amount>@<txid>:<vout>
+        #[clap(short, long)]
+        inflation: Vec<OutpointValue>,
+
+        /// Enable renomination procedure; parameter takes argument in form of
+        /// <txid>:<vout> specifying output controlling renomination right
+        #[clap(short, long)]
+        renomination: Option<OutPoint>,
+
+        /// Enable epoch-based burn & replacement procedure; parameter takes
+        /// argument in form of <txid>:<vout> specifying output controlling the
+        /// right of opening the first epoch
+        #[clap(short, long)]
+        epoch: Option<OutPoint>,
+    },
+}
 
 fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
-    match opts.command {}
+    match opts.command {
+        Command::Issue {
+            ticker,
+            name,
+            description,
+            precision,
+            allocation,
+            inflation,
+            renomination,
+            epoch,
+        } => {
+            let inflation = inflation.into_iter().fold(
+                BTreeMap::new(),
+                |mut map, OutpointValue { value, outpoint }| {
+                    // We may have only a single secondary issuance right per
+                    // outpoint, so folding all outpoints
+                    map.entry(outpoint)
+                        .and_modify(|amount| *amount += value)
+                        .or_insert(value);
+                    map
+                },
+            );
+            let (asset, genesis) = Asset::issue(
+                opts.network,
+                ticker,
+                name,
+                description,
+                precision,
+                allocation,
+                inflation,
+                renomination,
+                epoch,
+            );
+        }
+    }
 
     Ok(())
+}
+
+fn ticker_validator(name: &str) -> Result<(), String> {
+    if name.len() < 3 || name.len() > 8 || name.chars().any(|c| c < 'A' && c > 'Z') {
+        Err(
+            "Ticker name must be between 3 and 8 chars, contain no spaces and \
+            consist only of capital letters\
+            "
+            .to_string(),
+        )
+    } else {
+        Ok(())
+    }
 }

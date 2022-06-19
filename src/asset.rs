@@ -17,6 +17,7 @@ use amplify::Wrapper;
 use bitcoin::{OutPoint, Txid};
 use chrono::{DateTime, NaiveDateTime, Utc};
 use lnpbp::chain::Chain;
+use rgb::fungible::allocation::Allocation;
 use rgb::fungible::amount::{FractionalAmount, PreciseAmount};
 use rgb::prelude::*;
 use seals::txout::{TxoSeal, WitnessVoutError};

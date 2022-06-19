@@ -35,10 +35,7 @@ serde_crate = { package = "serde", version = "1", features = ["derive"], optiona
 serde_with = { version = "1.8", features = ["hex"], optional = true }
 serde_yaml = { version = "0.8", optional = true }
 serde_json = { version = "1", optional = true }
-clap = { version = "~3.1.18", optional = true, features = ["derive"] }
-
-[dev-dependencies]
-lnpbp_bech32 = "0.7.0"
+clap = { version = "~3.1.18", optional = true, features = ["derive", "env"] }
 
 [features]
 default = []
