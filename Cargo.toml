@@ -17,6 +17,10 @@ name = "rgb20"
 path = "src/lib.rs"
 crate-type = ["rlib", "staticlib"]
 
+[[bin]]
+name = "rgb20"
+required-features = ["cli"]
+
 [dependencies]
 amplify = "3.12.0"
 strict_encoding = "1.8.8"
@@ -25,12 +29,16 @@ lnpbp = "0.7.0"
 bp-seals = "0.7.0"
 rgb-std = { version = "0.8.0-alpha.1", features = ["wallet"], git = "https://github.com/RGB-WG/rgb-std" }
 bitcoin = "0.28.1"
-serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
-serde_with = { version = "1.8", features = ["hex"], optional = true }
 chrono = "0.4"
 url = "2.1"
+serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
+serde_with = { version = "1.8", features = ["hex"], optional = true }
+serde_yaml = { version = "0.8", optional = true }
+serde_json = { version = "1", optional = true }
+clap = { version = "~3.1.18", optional = true, features = ["derive"] }
 
 [features]
 default = []
-all = ["serde"]
+all = ["serde", "cli"]
 serde = ["serde_crate", "serde_with", "lnpbp/serde", "bitcoin/use-serde", "rgb-std/serde", "amplify/serde", "chrono/serde"]
+cli = ["clap", "serde", "serde_yaml", "serde_json"]
