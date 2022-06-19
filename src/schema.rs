@@ -48,11 +48,6 @@ pub enum FieldType {
     /// Used within context of genesis or renomination state transition
     Name = FIELD_TYPE_NAME,
 
-    /// Text of the asset contract
-    ///
-    /// Used within context of genesis or renomination state transition
-    RicardianContract = FIELD_TYPE_CONTRACT_TEXT,
-
     /// Decimal precision
     Precision = FIELD_TYPE_PRECISION,
 
@@ -161,7 +156,6 @@ fn genesis() -> GenesisSchema {
         metadata: type_map! {
             FieldType::Ticker => Once,
             FieldType::Name => Once,
-            FieldType::RicardianContract => NoneOrOnce,
             FieldType::Precision => Once,
             FieldType::Timestamp => Once,
             // We need this field in order to be able to verify pedersen
@@ -230,7 +224,6 @@ fn renomination() -> TransitionSchema {
         metadata: type_map! {
             FieldType::Ticker => NoneOrOnce,
             FieldType::Name => NoneOrOnce,
-            FieldType::RicardianContract => NoneOrOnce,
             FieldType::Precision => NoneOrOnce
         },
         closes: type_map! {
@@ -246,9 +239,6 @@ fn renomination() -> TransitionSchema {
 /// Builds & returns complete RGB20 schema (root schema object)
 pub fn schema() -> Schema {
     use Occurrences::*;
-
-    // TODO #33: Consider using data containers + state extensions for
-    //       providing issuer-created asset meta-information
 
     Schema {
         rgb_features: none!(),
@@ -338,8 +328,6 @@ pub fn schema() -> Schema {
             // double SHA256 hash and URL should be used instead, pointing to
             // the full contract text, where hash must be represented by a
             // hexadecimal string, optionally followed by `\n` and text URL
-            // TODO #33: Consider using data container instead of the above ^^^
-            FieldType::RicardianContract => TypeRef::ascii_string(),
             FieldType::Precision => TypeRef::u8(),
             // We need this b/c allocated amounts are hidden behind Pedersen
             // commitments
@@ -363,7 +351,7 @@ pub fn schema() -> Schema {
             OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
             OwnedRightType::OpenEpoch => StateSchema::Declarative,
             OwnedRightType::BurnReplace => StateSchema::Declarative,
-            OwnedRightType::Renomination => StateSchema::Declarative
+            OwnedRightType::Renomination => StateSchema::DataContainer
         },
         public_right_types: none!(),
         script: ValidationScript::Embedded,
@@ -375,11 +363,6 @@ pub fn schema() -> Schema {
 /// and allows only burn operations
 pub fn subschema() -> Schema {
     use Occurrences::*;
-
-    // TODO #33: Consider using data containers + state extensions for
-    //       providing issuer-created asset meta-information
-    // TODO #33: Consider adding Ricardian contracts to secondary issues and
-    //       transfers
 
     Schema {
         rgb_features: none!(),
@@ -439,13 +422,6 @@ pub fn subschema() -> Schema {
             // i.e. > 208 trillions, which is sufficient amount
             FieldType::Ticker => TypeRef::ascii_string(),
             FieldType::Name => TypeRef::ascii_string(),
-            // Contract text may contain URL, text or text representation of
-            // Ricardian contract, up to 64kb. If the contract doesn't fit, a
-            // double SHA256 hash and URL should be used instead, pointing to
-            // the full contract text, where hash must be represented by a
-            // hexadecimal string, optionally followed by `\n` and text URL
-            // TODO #33: Consider using data container instead of the above ^^^
-            FieldType::RicardianContract => TypeRef::ascii_string(),
             FieldType::Precision => TypeRef::u8(),
             // We need this b/c allocated amounts are hidden behind Pedersen
             // commitments

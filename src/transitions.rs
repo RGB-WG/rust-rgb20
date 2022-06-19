@@ -69,7 +69,6 @@ impl Asset {
         chain: Chain,
         ticker: AsciiString,
         name: AsciiString,
-        description: Option<String>,
         precision: u8,
         allocations: OutpointValueVec,
         inflation: OutpointValueMap,
@@ -83,12 +82,6 @@ impl Asset {
             FieldType::Precision => field!(U8, precision),
             FieldType::Timestamp => field!(I64, now)
         };
-        if let Some(description) = description {
-            metadata.insert(
-                FieldType::RicardianContract.into(),
-                field!(UnicodeString, description),
-            );
-        }
 
         let issued_supply = allocations.sum();
         let mut owned_rights = BTreeMap::new();

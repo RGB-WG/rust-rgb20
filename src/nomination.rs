@@ -10,13 +10,13 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use bitcoin::{OutPoint, Txid};
-use rgb::{ContractId, Genesis, Node, NodeId};
+use rgb::{ContainerId, ContractId, Genesis, Node, NodeId};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use stens::AsciiString;
 
 use crate::asset::Error;
-use crate::schema::{self, FieldType};
+use crate::schema::{self, FieldType, OwnedRightType};
 
 /// Nomination is a set of records keeping asset meta-information related to the
 /// names and other aspects of asset representation.
@@ -47,7 +47,7 @@ pub struct Nomination {
     name: AsciiString,
 
     /// Text of Ricardian contract
-    ricardian_contract: Option<String>,
+    ricardian_contract: Option<ContainerId>,
 
     /// Number of digits after the asset decimal point
     decimal_precision: u8,
@@ -68,6 +68,14 @@ impl TryFrom<&Genesis> for Nomination {
         }
         let genesis_meta = genesis.metadata();
 
+        let renomination = genesis
+            .owned_rights_by_type(OwnedRightType::Renomination as u16)
+            .map(|assignments| assignments.as_revealed_owned_containers())
+            .transpose()?
+            .as_deref()
+            .and_then(<[_]>::first)
+            .map(|(_, container)| container.id);
+
         Ok(Nomination {
             ticker: genesis_meta
                 .ascii_string(FieldType::Ticker)
@@ -79,10 +87,7 @@ impl TryFrom<&Genesis> for Nomination {
                 .first()
                 .ok_or(Error::UnsatisfiedSchemaRequirement)?
                 .clone(),
-            ricardian_contract: genesis_meta
-                .unicode_string(FieldType::RicardianContract)
-                .first()
-                .cloned(),
+            ricardian_contract: renomination,
             decimal_precision: *genesis_meta
                 .u8(FieldType::Precision)
                 .first()

@@ -65,6 +65,10 @@ pub enum Error {
     /// not of all epochs referenced in burn or burn & replace operation
     /// history are known from the consignment
     NotAllEpochsExposed,
+
+    /// renomination misses ricardian contract.
+    #[from(StateRetrievalError)]
+    RicardianContractMissed,
 }
 
 /// Detailed RGB20 asset information
@@ -190,11 +194,8 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn ricardian_contract(&self) -> Option<&str> {
-        self.active_nomination()
-            .ricardian_contract()
-            .as_ref()
-            .map(String::as_str)
+    pub fn ricardian_contract(&self) -> Option<ContainerId> {
+        *self.active_nomination().ricardian_contract()
     }
 
     /// Current decimal precision of the asset value
@@ -340,7 +341,7 @@ impl Asset {
     /// from the [`Consignment`] using [`Asset::try_from`] method.
     fn add_issue(
         &mut self,
-        consignment: &FullConsignment,
+        consignment: &Contract,
         transition: &Transition,
         witness: Txid,
     ) -> Result<(), Error> {
@@ -359,7 +360,7 @@ impl Asset {
     /// from the [`Consignment`] using [`Asset::try_from`] method.
     fn add_epoch(
         &mut self,
-        consignment: &FullConsignment,
+        consignment: &Contract,
         transition: &Transition,
         no: usize,
         operations: Vec<BurnReplace>,
@@ -467,10 +468,10 @@ impl TryFrom<Genesis> for Asset {
     }
 }
 
-impl TryFrom<FullConsignment> for Asset {
+impl TryFrom<Contract> for Asset {
     type Error = Error;
 
-    fn try_from(consignment: FullConsignment) -> Result<Self, Self::Error> {
+    fn try_from(consignment: Contract) -> Result<Self, Self::Error> {
         // 1. Parse genesis
         let mut asset: Asset = consignment.genesis.clone().try_into()?;
 

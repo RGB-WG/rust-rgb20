@@ -51,10 +51,6 @@ pub enum Command {
         /// Asset name (up to 32 characters)
         name: AsciiString,
 
-        /// Asset description
-        #[clap(short, long)]
-        description: Option<String>,
-
         /// Precision, i.e. number of digits reserved for fractional part
         #[clap(short, long, default_value = "8")]
         precision: u8,
@@ -87,7 +83,6 @@ fn main() -> Result<(), String> {
         Command::Issue {
             ticker,
             name,
-            description,
             precision,
             allocation,
             inflation,
@@ -109,7 +104,6 @@ fn main() -> Result<(), String> {
                 opts.network,
                 ticker,
                 name,
-                description,
                 precision,
                 allocation,
                 inflation,
