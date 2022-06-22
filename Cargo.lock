@@ -1175,7 +1175,7 @@ dependencies = [
 [[package]]
 name = "rgb-std"
 version = "0.8.0-beta.1"
-source = "git+https://github.com/RGB-WG/rgb-std#c31af79947f783bc193ca7eed270413b6d903dd9"
+source = "git+https://github.com/RGB-WG/rgb-std#37030522e2d42bf9eaa319c6017f3bc6ca21ebb8"
 dependencies = [
  "amplify",
  "bitcoin",

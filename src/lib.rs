@@ -27,6 +27,8 @@
 //!   [`SCHEMA_ID_BECH32`]
 //! - RGB20 subschema, returned by [`schema::subschema()`], prohibiting asset
 //!   replacement procedure and having id [`SUBSCHEMA_ID_BECH32`]
+//! - High-level RGB20 API performing asset issuance, transfers and other
+//!   asset-management operations
 
 #[macro_use]
 extern crate amplify;
@@ -40,12 +42,12 @@ extern crate stens;
 #[cfg(feature = "serde")]
 extern crate serde_crate as serde;
 #[cfg(feature = "serde")]
-#[macro_use]
 extern crate serde_with;
 
 pub mod schema;
 mod create;
 mod asset;
+mod transitions;
 
 pub use asset::{Asset, Error};
 pub use create::Rgb20;

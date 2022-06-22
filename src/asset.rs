@@ -9,7 +9,10 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId};
+use std::collections::btree_set;
+
+use bitcoin::OutPoint;
+use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId, OwnedValue};
 
 /// RGB20 asset information.
 ///
@@ -38,6 +41,21 @@ use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId};
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 #[derive(StrictEncode, StrictDecode)]
 pub struct Asset(ContractState);
+
+impl Asset {
+    /// Lists all known allocations for the given bitcoin transaction
+    /// [`OutPoint`]
+    pub fn known_coins(&self) -> btree_set::Iter<OwnedValue> { self.0.owned_values.iter() }
+
+    /// Lists all known allocations for the given bitcoin transaction
+    /// [`OutPoint`]
+    pub fn outpoint_coins(&self, outpoint: OutPoint) -> Vec<OwnedValue> {
+        self.known_coins()
+            .filter(|a| a.seal == outpoint)
+            .cloned()
+            .collect()
+    }
+}
 
 impl<T> TryFrom<&InmemConsignment<T>> for Asset
 where T: ConsignmentType

@@ -136,8 +136,8 @@ fn main() -> Result<(), String> {
             eprintln!("{}", "Contract source:".bright_green());
             println!("{}\n", contract);
 
-            eprintln!("{}", "Asset details:".bright_green());
-            eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
+            // eprintln!("{}", "Asset details:".bright_green());
+            // eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
         }
     }
 
