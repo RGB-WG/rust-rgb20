@@ -28,9 +28,9 @@ dependencies = [
 
 [[package]]
 name = "amplify"
-version = "3.12.0"
+version = "3.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47cfa6a69eeb140125a63e4f5ae1156a530f8744ea1d35aa1b8b5613e4d8b41d"
+checksum = "e45c604e86700ffea68a7d90c3ffb1508dad1120902f31dbb08afc942cf8acf3"
 dependencies = [
  "amplify_apfloat",
  "amplify_derive",
@@ -349,9 +349,9 @@ dependencies = [
 
 [[package]]
 name = "clap_lex"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5538cd660450ebeb4234cfecf8f2284b844ffc4c50531e66d584ad5b91293613"
+checksum = "87eba3c8c7f42ef17f6c659fc7416d0f4758cd3e58861ee63c5fa4a4dde649e4"
 dependencies = [
  "os_str_bytes",
 ]
@@ -679,9 +679,9 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "1.9.0"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c6392766afd7964e2531940894cffe4bd8d7d17dbc3c1c4857040fd4b33bdb3"
+checksum = "10a35a97730320ffe8e2d410b5d3b69279b98d2c14bdb8b70ea89ecf7888d41e"
 dependencies = [
  "autocfg 1.1.0",
  "hashbrown",
@@ -918,9 +918,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.39"
+version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c54b25569025b7fc9651de43004ae593a75ad88543b17178aa5e1b9c4f15f56f"
+checksum = "dd96a1e8ed2596c337f8eae5f24924ec83f5ad5ab21ea8e455d3566c69fbcaf7"
 dependencies = [
  "unicode-ident",
 ]
@@ -945,9 +945,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f53dc8cf16a769a6f677e09e7ff2cd4be1ea0f48754aac39520536962011de0d"
+checksum = "3bcdf212e9776fbcb2d23ab029360416bb1706b1aea2d1a5ba002727cbcab804"
 dependencies = [
  "proc-macro2",
 ]
@@ -1153,8 +1153,8 @@ dependencies = [
 
 [[package]]
 name = "rgb-core"
-version = "0.8.0-alpha.1"
-source = "git+https://github.com/RGB-WG/rgb-core#dedc60fd6fbb88ae92405071debd7d9cbad63cdc"
+version = "0.8.0-beta.1"
+source = "git+https://github.com/RGB-WG/rgb-core#976bb6f1ca4d4c311c3ca2e65d78696d6f5cca41"
 dependencies = [
  "aluvm",
  "amplify",
@@ -1174,8 +1174,8 @@ dependencies = [
 
 [[package]]
 name = "rgb-std"
-version = "0.8.0-alpha.1"
-source = "git+https://github.com/RGB-WG/rgb-std#10bf36cf4551436e479d9365a5f0efae72005808"
+version = "0.8.0-beta.1"
+source = "git+https://github.com/RGB-WG/rgb-std#1cb0f7599da392ed8bc694b6750ba628d0ae2c9b"
 dependencies = [
  "amplify",
  "bitcoin",
@@ -1429,9 +1429,9 @@ dependencies = [
 
 [[package]]
 name = "stens"
-version = "0.3.2"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e56c50a9ee6529486f13b8ca5682c4f23260f5900e4f2206cd7be689bb4f095"
+checksum = "dc1e031ab71b85047628043fc99cbd286277b956534fd4f6762cce7cdb26b150"
 dependencies = [
  "amplify",
  "serde",
@@ -1442,9 +1442,9 @@ dependencies = [
 
 [[package]]
 name = "strict_encoding"
-version = "1.8.9"
+version = "1.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3379d91cf1a6dda3ad54629ae868f0dd65a8fb42fae697c94777253e795a12b3"
+checksum = "acd582d614348ea8ff707ab58b145e8cb504a929219f3efc2492bed62d27c4bb"
 dependencies = [
  "amplify",
  "bitcoin",

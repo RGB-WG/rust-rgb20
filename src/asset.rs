@@ -194,7 +194,7 @@ impl Asset {
     ///     since if there were further not yet known nominations the value
     ///     returned by this function will not match the valid data
     #[inline]
-    pub fn ricardian_contract(&self) -> Option<ContainerId> {
+    pub fn ricardian_contract(&self) -> Option<AttachmentId> {
         *self.active_nomination().ricardian_contract()
     }
 
@@ -339,9 +339,9 @@ impl Asset {
     /// Adds issue to the list of known issues. This is an internal function
     /// which should not be used directly; instead construct the asset structure
     /// from the [`Consignment`] using [`Asset::try_from`] method.
-    fn add_issue(
+    fn add_issue<T: ConsignmentType>(
         &mut self,
-        consignment: &Contract,
+        consignment: &InmemConsignment<T>,
         transition: &Transition,
         witness: Txid,
     ) -> Result<(), Error> {
@@ -358,9 +358,9 @@ impl Asset {
     /// Adds an epoch to the list of known epochs. This is an internal function
     /// which should not be used directly; instead construct the asset structure
     /// from the [`Consignment`] using [`Asset::try_from`] method.
-    fn add_epoch(
+    fn add_epoch<T: ConsignmentType>(
         &mut self,
-        consignment: &Contract,
+        consignment: &InmemConsignment<T>,
         transition: &Transition,
         no: usize,
         operations: Vec<BurnReplace>,
@@ -468,10 +468,12 @@ impl TryFrom<Genesis> for Asset {
     }
 }
 
-impl TryFrom<Contract> for Asset {
+impl<T> TryFrom<InmemConsignment<T>> for Asset
+where T: ConsignmentType
+{
     type Error = Error;
 
-    fn try_from(consignment: Contract) -> Result<Self, Self::Error> {
+    fn try_from(consignment: InmemConsignment<T>) -> Result<Self, Self::Error> {
         // 1. Parse genesis
         let mut asset: Asset = consignment.genesis.clone().try_into()?;
 

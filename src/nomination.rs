@@ -10,7 +10,7 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use bitcoin::{OutPoint, Txid};
-use rgb::{ContainerId, ContractId, Genesis, Node, NodeId};
+use rgb::{AttachmentId, ContractId, Genesis, Node, NodeId};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use stens::AsciiString;
@@ -47,7 +47,7 @@ pub struct Nomination {
     name: AsciiString,
 
     /// Text of Ricardian contract
-    ricardian_contract: Option<ContainerId>,
+    ricardian_contract: Option<AttachmentId>,
 
     /// Number of digits after the asset decimal point
     decimal_precision: u8,
@@ -70,7 +70,7 @@ impl TryFrom<&Genesis> for Nomination {
 
         let renomination = genesis
             .owned_rights_by_type(OwnedRightType::Renomination as u16)
-            .map(|assignments| assignments.as_revealed_owned_containers())
+            .map(|assignments| assignments.as_revealed_owned_attachments())
             .transpose()?
             .as_deref()
             .and_then(<[_]>::first)
