@@ -14,15 +14,17 @@ extern crate clap;
 extern crate serde_crate as serde;
 
 use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use bitcoin::OutPoint;
 use clap::Parser;
 use colored::Colorize;
 use lnpbp::chain::Chain;
-use rgb::fungible::allocation::OutpointValue;
-use rgb::{Consignment, Contract, ContractId};
+use rgb::fungible::allocation::{AllocatedValue, OutpointValue, UtxobValue};
+use rgb::{Consignment, Contract, IntoRevealedSeal, StateTransfer};
 use rgb20::{Asset, Rgb20};
 use stens::AsciiString;
+use strict_encoding::{StrictDecode, StrictEncode};
 
 #[derive(Parser, Clone, Debug)]
 #[clap(
@@ -46,7 +48,7 @@ pub struct Opts {
 pub enum Command {
     Issue {
         /// Asset ticker (up to 8 characters, always converted to uppercase)
-        #[clap(validator=ticker_validator)]
+        #[clap(validator = ticker_validator)]
         ticker: AsciiString,
 
         /// Asset name (up to 32 characters)
@@ -76,9 +78,27 @@ pub enum Command {
         epoch: Option<OutPoint>,
     },
 
-    State {
-        /// Contract id (starting with `rgb1`)
-        contract_id: ContractId,
+    /// Prepares state transition for assets transfer.
+    Transfer {
+        /// File with state transfer consignment, which endpoints will act as
+        /// inputs.
+        consignment: PathBuf,
+
+        /// Bitcoin transaction UTXOs which will be spent by the transfer
+        #[clap(short = 'u', long = "utxo", required = true)]
+        outpoints: Vec<OutPoint>,
+
+        /// List of transfer beneficiaries
+        #[clap(required = true)]
+        beneficiaries: Vec<UtxobValue>,
+
+        /// Change output; one per schema state type.
+        #[clap(short, long)]
+        change: Vec<AllocatedValue>,
+
+        /// File to store state transition transferring assets to the
+        /// beneficiaries and onto change outputs.
+        output: PathBuf,
     },
 }
 
@@ -86,7 +106,6 @@ fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
     match opts.command {
-        Command::State { contract_id: _ } => {}
         Command::Issue {
             ticker,
             name,
@@ -118,7 +137,7 @@ fn main() -> Result<(), String> {
                 epoch,
             );
 
-            let asset =
+            let _asset =
                 Asset::try_from(&contract).expect("create_rgb20 does not match RGB20 schema");
 
             eprintln!(
@@ -138,6 +157,32 @@ fn main() -> Result<(), String> {
 
             // eprintln!("{}", "Asset details:".bright_green());
             // eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
+        }
+
+        Command::Transfer {
+            consignment,
+            outpoints,
+            beneficiaries,
+            change,
+            output,
+        } => {
+            let transfer = StateTransfer::strict_file_load(consignment).unwrap();
+
+            let asset = Asset::try_from(&transfer).unwrap();
+
+            let beneficiaries = beneficiaries
+                .into_iter()
+                .map(|v| (v.seal_confidential.into(), v.value))
+                .collect();
+            let change = change
+                .into_iter()
+                .map(|v| (v.into_revealed_seal(), v.value))
+                .collect();
+            let outpoints = outpoints.into_iter().collect();
+            let transition = asset.transfer(outpoints, beneficiaries, change).unwrap();
+
+            transition.strict_file_save(output).unwrap();
+            //consignment.strict_file_save(output).unwrap();
         }
     }
 

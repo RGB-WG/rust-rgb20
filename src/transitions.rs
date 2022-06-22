@@ -58,9 +58,9 @@ impl Asset {
     /// function
     pub fn inflate(
         &self,
-        closing: BTreeSet<OutPoint>,
-        next_inflation: AllocationValueMap,
-        allocations: AllocationValueVec,
+        _closing: BTreeSet<OutPoint>,
+        _next_inflation: AllocationValueMap,
+        _allocations: AllocationValueVec,
     ) -> Result<Transition, Error> {
         todo!()
     }
@@ -69,9 +69,9 @@ impl Asset {
     /// state transition, which is constructed and returned by this function
     pub fn epoch(
         &self,
-        closing: OutPoint,
-        next_epoch: Option<ExplicitSeal>,
-        burning_seal: Option<ExplicitSeal>,
+        _closing: OutPoint,
+        _next_epoch: Option<ExplicitSeal>,
+        _burning_seal: Option<ExplicitSeal>,
     ) -> Result<Transition, Error> {
         todo!()
     }
@@ -81,10 +81,10 @@ impl Asset {
     /// this function
     pub fn burn(
         &self,
-        closing: OutPoint,
-        burned_value: AtomicValue,
-        burned_utxos: BTreeSet<OutPoint>,
-        next_burn: Option<ExplicitSeal>,
+        _closing: OutPoint,
+        _burned_value: AtomicValue,
+        _burned_utxos: BTreeSet<OutPoint>,
+        _next_burn: Option<ExplicitSeal>,
     ) -> Result<Transition, Error> {
         todo!()
     }
@@ -94,11 +94,11 @@ impl Asset {
     /// constructed and returned by this function
     pub fn burn_replace(
         &self,
-        closing: OutPoint,
-        burned_value: AtomicValue,
-        burned_utxos: BTreeSet<OutPoint>,
-        next_burn: Option<ExplicitSeal>,
-        allocations: AllocationValueVec,
+        _closing: OutPoint,
+        _burned_value: AtomicValue,
+        _burned_utxos: BTreeSet<OutPoint>,
+        _next_burn: Option<ExplicitSeal>,
+        _allocations: AllocationValueVec,
     ) -> Result<Transition, Error> {
         todo!()
     }
