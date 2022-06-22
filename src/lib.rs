@@ -40,15 +40,13 @@ extern crate stens;
 #[cfg(feature = "serde")]
 extern crate serde_crate as serde;
 #[cfg(feature = "serde")]
+#[macro_use]
 extern crate serde_with;
 
-pub mod asset;
-mod nomination;
 pub mod schema;
-mod supply;
-pub mod transitions;
+mod create;
+mod asset;
 
 pub use asset::Asset;
-pub use nomination::{Nomination, Renomination};
+pub use create::Rgb20;
 pub use schema::{SCHEMA_ID_BECH32, SUBSCHEMA_ID_BECH32};
-pub use supply::{BurnReplace, Epoch, Issue, Supply, SupplyMeasure};

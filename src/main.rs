@@ -20,8 +20,8 @@ use clap::Parser;
 use colored::Colorize;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::OutpointValue;
-use rgb::ContractId;
-use rgb20::Asset;
+use rgb::{Contract, ContractId};
+use rgb20::Rgb20;
 use stens::AsciiString;
 
 #[derive(Parser, Clone, Debug)]
@@ -86,7 +86,7 @@ fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
     match opts.command {
-        Command::State { contract_id } => {}
+        Command::State { contract_id: _ } => {}
         Command::Issue {
             ticker,
             name,
@@ -107,7 +107,7 @@ fn main() -> Result<(), String> {
                     map
                 },
             );
-            let (asset, contract) = Asset::issue(
+            let contract = Contract::create_rgb20(
                 opts.network,
                 ticker,
                 name,
@@ -133,8 +133,8 @@ fn main() -> Result<(), String> {
             eprintln!("{}", "Contract source:".bright_green());
             println!("{}\n", contract);
 
-            eprintln!("{}", "Asset details:".bright_green());
-            eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
+            // eprintln!("{}", "Asset details:".bright_green());
+            // eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
         }
     }
 
