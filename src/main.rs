@@ -20,8 +20,8 @@ use clap::Parser;
 use colored::Colorize;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::OutpointValue;
-use rgb::{Contract, ContractId};
-use rgb20::Rgb20;
+use rgb::{Consignment, Contract, ContractId};
+use rgb20::{Asset, Rgb20};
 use stens::AsciiString;
 
 #[derive(Parser, Clone, Debug)]
@@ -118,6 +118,9 @@ fn main() -> Result<(), String> {
                 epoch,
             );
 
+            let asset =
+                Asset::try_from(&contract).expect("create_rgb20 does not match RGB20 schema");
+
             eprintln!(
                 "{} {}\n",
                 "Contract ID:".bright_green(),
@@ -125,16 +128,16 @@ fn main() -> Result<(), String> {
             );
 
             eprintln!("{}", "Contract YAML:".bright_green());
-            eprintln!("{}", serde_yaml::to_string(&contract.genesis).unwrap());
+            eprintln!("{}", serde_yaml::to_string(contract.genesis()).unwrap());
 
             eprintln!("{}", "Contract JSON:".bright_green());
-            println!("{}\n", serde_json::to_string(&contract.genesis).unwrap());
+            println!("{}\n", serde_json::to_string(contract.genesis()).unwrap());
 
             eprintln!("{}", "Contract source:".bright_green());
             println!("{}\n", contract);
 
-            // eprintln!("{}", "Asset details:".bright_green());
-            // eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
+            eprintln!("{}", "Asset details:".bright_green());
+            eprintln!("{}\n", serde_yaml::to_string(&asset).unwrap());
         }
     }
 

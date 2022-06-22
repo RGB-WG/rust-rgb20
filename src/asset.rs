@@ -9,7 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use rgb::ContractState;
+use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId};
 
 /// RGB20 asset information.
 ///
@@ -40,4 +40,46 @@ use rgb::ContractState;
 #[cfg_attr(feature = "serde", derive(Serialize), serde(crate = "serde_crate"))]
 pub struct Asset(ContractState);
 
-impl Asset {}
+impl<T> TryFrom<&InmemConsignment<T>> for Asset
+where T: ConsignmentType
+{
+    type Error = Error;
+
+    fn try_from(consignment: &InmemConsignment<T>) -> Result<Self, Self::Error> {
+        let state = ContractState::from(consignment);
+
+        // TODO: Validate the state
+        if state.schema_id != crate::schema().schema_id() {
+            Err(Error::WrongSchemaId)?;
+        }
+
+        Ok(Asset(state))
+    }
+}
+
+/// Errors generated during RGB20 asset information parsing from the underlying
+/// genesis or consignment data
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Display, From, Error)]
+#[display(doc_comments)]
+pub enum Error {
+    /// genesis schema id does not match any of RGB20 schemata
+    WrongSchemaId,
+
+    /// genesis defines a seal referencing witness transaction while there
+    /// can't be a witness transaction for genesis
+    GenesisSeal,
+
+    /// epoch seal definition for node {0} contains confidential data
+    EpochSealConfidential(NodeId),
+
+    /// nurn & replace seal definition for node {0} contains confidential data
+    BurnSealConfidential(NodeId),
+
+    /// inflation assignment (seal or state) for node {0} contains confidential
+    /// data
+    InflationAssignmentConfidential(NodeId),
+
+    /// not of all epochs referenced in burn or burn & replace operation
+    /// history are known from the consignment
+    NotAllEpochsExposed,
+}
