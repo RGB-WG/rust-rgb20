@@ -21,8 +21,9 @@ use clap::Parser;
 use colored::Colorize;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::{AllocatedValue, OutpointValue, UtxobValue};
-use rgb::{Consignment, Contract, IntoRevealedSeal, StateTransfer};
+use rgb::{seal, Consignment, Contract, IntoRevealedSeal, StateTransfer};
 use rgb20::{Asset, Rgb20};
+use seals::txout::CloseMethod;
 use stens::AsciiString;
 use strict_encoding::{StrictDecode, StrictEncode};
 
@@ -99,6 +100,16 @@ pub enum Command {
         /// File to store state transition transferring assets to the
         /// beneficiaries and onto change outputs.
         output: PathBuf,
+    },
+
+    /// Generate blinded UTXO value
+    Blind {
+        /// Method for seal closing ('tapret1st' or 'opret1st'; defaults to 'tapret1st')
+        #[clap(short, long, default_value = "tapret1st")]
+        method: CloseMethod,
+
+        /// Unspent transaction output to define as a blinded seal
+        utxo: OutPoint,
     },
 }
 
@@ -183,6 +194,15 @@ fn main() -> Result<(), String> {
 
             transition.strict_file_save(output).unwrap();
             //consignment.strict_file_save(output).unwrap();
+
+            println!("{}", serde_yaml::to_string(&transition).unwrap());
+            println!("{}", "Success".bold().bright_green());
+        }
+
+        Command::Blind { utxo, method } => {
+            let seal = seal::Revealed::new(method, utxo);
+            println!("{}", seal.to_concealed_seal());
+            println!("Blinding factor: {}", seal.blinding);
         }
     }
 
