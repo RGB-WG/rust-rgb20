@@ -20,6 +20,7 @@ use clap::Parser;
 use colored::Colorize;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::OutpointValue;
+use rgb::ContractId;
 use rgb20::Asset;
 use stens::AsciiString;
 
@@ -33,7 +34,7 @@ use stens::AsciiString;
 )]
 pub struct Opts {
     /// Bitcoin network to use
-    #[clap(short, long, default_value = "testnet", env = "RGB_NETWORK")]
+    #[clap(short, long, default_value = "signet", env = "RGB_NETWORK")]
     pub network: Chain,
 
     /// Command to execute
@@ -74,12 +75,18 @@ pub enum Command {
         #[clap(short, long)]
         epoch: Option<OutPoint>,
     },
+
+    State {
+        /// Contract id (starting with `rgb1`)
+        contract_id: ContractId,
+    },
 }
 
 fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
     match opts.command {
+        Command::State { contract_id } => {}
         Command::Issue {
             ticker,
             name,
