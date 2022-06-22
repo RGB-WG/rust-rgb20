@@ -47,6 +47,6 @@ pub mod schema;
 mod create;
 mod asset;
 
-pub use asset::Asset;
+pub use asset::{Asset, Error};
 pub use create::Rgb20;
 pub use schema::{schema, subschema, SCHEMA_ID_BECH32, SUBSCHEMA_ID_BECH32};

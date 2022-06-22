@@ -37,7 +37,6 @@ use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId};
 /// reconstructed each time from that data upon the launch
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 #[derive(StrictEncode, StrictDecode)]
-#[cfg_attr(feature = "serde", derive(Serialize), serde(crate = "serde_crate"))]
 pub struct Asset(ContractState);
 
 impl<T> TryFrom<&InmemConsignment<T>> for Asset
@@ -47,13 +46,19 @@ where T: ConsignmentType
 
     fn try_from(consignment: &InmemConsignment<T>) -> Result<Self, Self::Error> {
         let state = ContractState::from(consignment);
+        let asset = Asset(state);
+        asset.validate()?;
+        Ok(asset)
+    }
+}
 
-        // TODO: Validate the state
-        if state.schema_id != crate::schema().schema_id() {
+impl Asset {
+    fn validate(&self) -> Result<(), Error> {
+        if self.0.schema_id != crate::schema().schema_id() {
             Err(Error::WrongSchemaId)?;
         }
-
-        Ok(Asset(state))
+        // TODO: Validate the state
+        Ok(())
     }
 }
 

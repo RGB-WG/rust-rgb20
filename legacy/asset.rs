@@ -71,30 +71,6 @@ pub enum Error {
     RicardianContractMissed,
 }
 
-/// Detailed RGB20 asset information
-///
-/// Structure presents complete set of RGB20 asset-related data which can be
-/// extracted from the genesis or a consignment. It is not the source of the
-/// truth, and the presence of the data in the structure does not imply their
-/// validity, since the structure constructor does not validates blockchain or
-/// LN-based transaction commitments or satisfaction of schema requirements.
-///
-/// The main reason of the structure is:
-/// 1) to persist *cached* copy of the asset data without the requirement to
-///    parse all stash transition each time in order to extract allocation
-///    information;
-/// 2) to present data from asset genesis or consignment for UI in convenient
-///    form.
-/// 3) to orchestrate generation of new state transitions taking into account
-///    known asset information.
-///
-/// (1) is important for wallets, (2) is for more generic software, like
-/// client-side-validated data explorers, developer & debugging tools etc and
-/// (3) for asset-management software.
-///
-/// In both (2) and (3) case there is no need to persist the structure; genesis
-/// /consignment should be persisted instead and the structure must be
-/// reconstructed each time from that data upon the launch
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
