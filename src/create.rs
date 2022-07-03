@@ -17,7 +17,9 @@ use lnpbp::chain::Chain;
 use rgb::fungible::allocation::{
     AllocationMap, IntoSealValueMap, OutpointValueMap, OutpointValueVec,
 };
-use rgb::{data, secp256k1zkp, value, Assignment, AssignmentVec, Consignment, Contract, Genesis};
+use rgb::{
+    data, secp256k1zkp, value, Assignment, Consignment, Contract, Genesis, TypedAssignments,
+};
 use stens::AsciiString;
 
 use crate::schema;
@@ -61,7 +63,7 @@ impl<'consignment> Rgb20<'consignment> for Contract {
         let mut owned_rights = BTreeMap::new();
         owned_rights.insert(
             OwnedRightType::Assets.into(),
-            AssignmentVec::zero_balanced(
+            TypedAssignments::zero_balanced(
                 vec![value::Revealed {
                     value: issued_supply,
                     blinding: secp256k1zkp::key::ONE_KEY.into(),
@@ -82,9 +84,9 @@ impl<'consignment> Rgb20<'consignment> for Contract {
         if let Some(outpoint) = renomination {
             owned_rights.insert(
                 OwnedRightType::Renomination.into(),
-                AssignmentVec::Declarative(vec![Assignment::Revealed {
-                    seal_definition: outpoint.into(),
-                    assigned_state: data::Void(),
+                TypedAssignments::Void(vec![Assignment::Revealed {
+                    seal: outpoint.into(),
+                    state: data::Void(),
                 }]),
             );
         }
@@ -92,9 +94,9 @@ impl<'consignment> Rgb20<'consignment> for Contract {
         if let Some(outpoint) = epoch {
             owned_rights.insert(
                 OwnedRightType::BurnReplace.into(),
-                AssignmentVec::Declarative(vec![Assignment::Revealed {
-                    seal_definition: outpoint.into(),
-                    assigned_state: data::Void(),
+                TypedAssignments::Void(vec![Assignment::Revealed {
+                    seal: outpoint.into(),
+                    state: data::Void(),
                 }]),
             );
         }

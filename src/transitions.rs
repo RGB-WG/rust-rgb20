@@ -133,7 +133,7 @@ impl Asset {
 
         let assignments = type_map! {
             OwnedRightType::Assets =>
-            AssignmentVec::zero_balanced(input_amounts, change, payment)
+            TypedAssignments::zero_balanced(input_amounts, change, payment)
         };
 
         let mut parent = ParentOwnedRights::default();
