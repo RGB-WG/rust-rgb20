@@ -24,12 +24,12 @@ use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
 pub const SCHEMA_ID_BECH32: &'static str =
-    "rgbsh1sdjzld72aj3fdq7qxmxtvn3ss09dwf02epzwnwxv4pejjkpf3tuqzcahgf";
+    "rgbsh1kqth3x9xa5qde0vve0avfe40s28xzsjqds3dg0crv353uhmaawzs9n6k8y";
 
 /// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
 /// replace operations
 pub const SUBSCHEMA_ID_BECH32: &'static str =
-    "rgbsh1r30xaqt6qqd4g9z5m6m9c38ny00uad2afgzgpr8hfy5c4j5ll93qajhm5f";
+    "rgbsh190z9zepf8rmla9kqc0qsptchunxjmv3xkg2hnjf2v7v093z3nc9q55d54x";
 
 /// Field types for RGB20 schemata
 ///
@@ -464,22 +464,20 @@ mod test {
     #[test]
     fn schema_id() {
         let id = schema().schema_id();
-        println!("{}", id);
         assert_eq!(id.to_string(), SCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1sdjzld72aj3fdq7qxmxtvn3ss09dwf02epzwnwxv4pejjkpf3tuqzcahgf"
+            "rgbsh1kqth3x9xa5qde0vve0avfe40s28xzsjqds3dg0crv353uhmaawzs9n6k8y"
         );
     }
 
     #[test]
     fn subschema_id() {
         let id = subschema().schema_id();
-        println!("{}", id);
         assert_eq!(id.to_string(), SUBSCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1r30xaqt6qqd4g9z5m6m9c38ny00uad2afgzgpr8hfy5c4j5ll93qajhm5f"
+            "rgbsh190z9zepf8rmla9kqc0qsptchunxjmv3xkg2hnjf2v7v093z3nc9q55d54x"
         );
     }
 
@@ -499,11 +497,10 @@ mod test {
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
         assert_eq!(
             bech32data,
-            "z1qxz4zsgwsgcpq8z63qwrzlkqrl5uzfmcux3pwnrufmg3khqq8lnqht9m6vtx8g4p\
-            5jeuhnkw9sk4shqxy4mfwenl4e8cmqwfjr3hptv0gr9ry4zmw6tq466h5esrtnm9d7w\
-            gq8g5g6ghe0pxd9pjzf0tq3ddj8ws4wkgpx48cuf88g5mw0cqmu97y4m2e6z6zxp68a\
-            c6j5rj4kxgqj6lmx5j4tsqc9et3c00deayj6ck886p4rmfrw7fxu8xg336f32ragnt8\
-            lraqlvhzwrcjjc6zd8et9z0mmttlklgnyhlr75tmupvuc9p"
+            "z1qxz4zvgwcgcqe0px485p33q8lqgsc0yp559jc3tzus5jjmxd62t07ytvyu5592552sumk0klh9x4qhq2p58t\
+            0mncd5hemq42vpct4dm8ypn3tmz78gdcdmd8vtgfcx768dr6q3ux3yjrltuemfg9xjfms200vqrcjm2kpuludpq\
+            j86ykrneqdpxspv899cd4zxxgugtsvs0tq438y640thu5tszeentnvgxyrt6wagk7fxaefus4vl0znmtxq9rxz2\
+            r4n980un4fwx9mt7myuy6tr22lu23t7xqpec06d9uvjjeutlc3waut80n"
         );
     }
 
