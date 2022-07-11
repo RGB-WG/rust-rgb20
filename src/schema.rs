@@ -142,7 +142,7 @@ impl From<TransitionType> for rgb::schema::TransitionType {
 fn type_system() -> TypeSystem {
     type_system! {
         "OutPoint" :: {
-            StructField::new("Txid"),
+            StructField::with("Txid"),
             StructField::primitive(PrimitiveType::U16),
         },
         "Txid" :: { StructField::array(PrimitiveType::U8, 32) }
