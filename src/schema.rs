@@ -23,12 +23,12 @@ use rgb::ValidationScript;
 use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
-pub const SCHEMA_ID_BECH32: &'static str =
+pub const SCHEMA_ID_BECH32: &str =
     "rgbsh1kqth3x9xa5qde0vve0avfe40s28xzsjqds3dg0crv353uhmaawzs9n6k8y";
 
 /// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
 /// replace operations
-pub const SUBSCHEMA_ID_BECH32: &'static str =
+pub const SUBSCHEMA_ID_BECH32: &str =
     "rgbsh190z9zepf8rmla9kqc0qsptchunxjmv3xkg2hnjf2v7v093z3nc9q55d54x";
 
 /// Field types for RGB20 schemata
@@ -73,7 +73,9 @@ pub enum FieldType {
 
 impl From<FieldType> for rgb::schema::FieldType {
     #[inline]
-    fn from(ft: FieldType) -> Self { ft as rgb::schema::FieldType }
+    fn from(ft: FieldType) -> Self {
+        ft as rgb::schema::FieldType
+    }
 }
 
 /// Owned right types used by RGB20 schemata
@@ -101,7 +103,9 @@ pub enum OwnedRightType {
 
 impl From<OwnedRightType> for rgb::schema::OwnedRightType {
     #[inline]
-    fn from(t: OwnedRightType) -> Self { t as rgb::schema::OwnedRightType }
+    fn from(t: OwnedRightType) -> Self {
+        t as rgb::schema::OwnedRightType
+    }
 }
 
 /// State transition types defined by RGB20 schemata
@@ -136,13 +140,15 @@ pub enum TransitionType {
 
 impl From<TransitionType> for rgb::schema::TransitionType {
     #[inline]
-    fn from(t: TransitionType) -> Self { t as rgb::schema::TransitionType }
+    fn from(t: TransitionType) -> Self {
+        t as rgb::schema::TransitionType
+    }
 }
 
 fn type_system() -> TypeSystem {
     type_system! {
         "OutPoint" :: {
-            StructField::new("Txid"),
+            StructField::with("Txid"),
             StructField::primitive(PrimitiveType::U16),
         },
         "Txid" :: { StructField::array(PrimitiveType::U8, 32) }

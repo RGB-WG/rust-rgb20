@@ -24,7 +24,7 @@ required-features = ["cli"]
 [dependencies]
 amplify = "3.12.1"
 strict_encoding = "~0.8.0"
-stens = "0.5.0"
+stens = "0.7.1"
 lnpbp = "0.8.0"
 bp-seals = "0.8.0-rc.1"
 rgb-std = { version = "0.8.0-rc.2", features = ["wallet"] }
