@@ -140,9 +140,9 @@ impl Asset {
         for coin in input_usto {
             parent
                 .entry(coin.outpoint.node_id)
-                .or_insert(empty!())
+                .or_insert_with(|| empty!())
                 .entry(OwnedRightType::Assets.into())
-                .or_insert(empty!())
+                .or_insert_with(|| empty!())
                 .push(coin.outpoint.no);
         }
 

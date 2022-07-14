@@ -26,6 +26,7 @@ use crate::schema;
 use crate::schema::{FieldType, OwnedRightType};
 
 /// Extension trait for consignments defining RGB20-specific API.
+#[allow(clippy::too_many_arguments)]
 pub trait Rgb20<'consignment>: Consignment<'consignment> {
     /// Performs primary asset issue, producing [`Contract`] consignment.
     fn create_rgb20(
