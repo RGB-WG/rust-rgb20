@@ -6,7 +6,7 @@ This repository provides rust library and a command-line utility `rgb20` which
 can be used alongside RGB Node to generate and parse RGB20 data (schema, issue
 assets, interpret contract information returned by RGB Node).
 
-## Installation
+## Command-line utility
 
 ### Install with Docker
 
