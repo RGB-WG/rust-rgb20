@@ -24,12 +24,12 @@ use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
 pub const SCHEMA_ID_BECH32: &str =
-    "rgbsh1kqth3x9xa5qde0vve0avfe40s28xzsjqds3dg0crv353uhmaawzs9n6k8y";
+    "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
 
 /// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
 /// replace operations
 pub const SUBSCHEMA_ID_BECH32: &str =
-    "rgbsh190z9zepf8rmla9kqc0qsptchunxjmv3xkg2hnjf2v7v093z3nc9q55d54x";
+    "rgbsh1636y76cxrnsfqg7zjnl08f0kqt9j09tre2wfxzrrs86f76ssp7cqnn0yyf";
 
 /// Field types for RGB20 schemata
 ///
@@ -73,9 +73,7 @@ pub enum FieldType {
 
 impl From<FieldType> for rgb::schema::FieldType {
     #[inline]
-    fn from(ft: FieldType) -> Self {
-        ft as rgb::schema::FieldType
-    }
+    fn from(ft: FieldType) -> Self { ft as rgb::schema::FieldType }
 }
 
 /// Owned right types used by RGB20 schemata
@@ -103,9 +101,7 @@ pub enum OwnedRightType {
 
 impl From<OwnedRightType> for rgb::schema::OwnedRightType {
     #[inline]
-    fn from(t: OwnedRightType) -> Self {
-        t as rgb::schema::OwnedRightType
-    }
+    fn from(t: OwnedRightType) -> Self { t as rgb::schema::OwnedRightType }
 }
 
 /// State transition types defined by RGB20 schemata
@@ -140,9 +136,7 @@ pub enum TransitionType {
 
 impl From<TransitionType> for rgb::schema::TransitionType {
     #[inline]
-    fn from(t: TransitionType) -> Self {
-        t as rgb::schema::TransitionType
-    }
+    fn from(t: TransitionType) -> Self { t as rgb::schema::TransitionType }
 }
 
 fn type_system() -> TypeSystem {
@@ -473,7 +467,7 @@ mod test {
         assert_eq!(id.to_string(), SCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1kqth3x9xa5qde0vve0avfe40s28xzsjqds3dg0crv353uhmaawzs9n6k8y"
+            "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8"
         );
     }
 
@@ -483,7 +477,7 @@ mod test {
         assert_eq!(id.to_string(), SUBSCHEMA_ID_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh190z9zepf8rmla9kqc0qsptchunxjmv3xkg2hnjf2v7v093z3nc9q55d54x"
+            "rgbsh1636y76cxrnsfqg7zjnl08f0kqt9j09tre2wfxzrrs86f76ssp7cqnn0yyf"
         );
     }
 
@@ -503,10 +497,10 @@ mod test {
         assert_eq!(format!("{:#?}", schema()), format!("{:#?}", schema20));
         assert_eq!(
             bech32data,
-            "z1qxz4zvgwcgcqe0px485p33q8lqgsc0yp559jc3tzus5jjmxd62t07ytvyu5592552sumk0klh9x4qhq2p58t\
-            0mncd5hemq42vpct4dm8ypn3tmz78gdcdmd8vtgfcx768dr6q3ux3yjrltuemfg9xjfms200vqrcjm2kpuludpq\
-            j86ykrneqdpxspv899cd4zxxgugtsvs0tq438y640thu5tszeentnvgxyrt6wagk7fxaefus4vl0znmtxq9rxz2\
-            r4n980un4fwx9mt7myuy6tr22lu23t7xqpec06d9uvjjeutlc3waut80n"
+            "z1qxz4zwcwcgcqcl2d2tgnrzqtwq33swqzfvt43zkyepg49ky655klwg7cfefgg4pf38ewe78em8u6qwq5rgwx\
+            ah03mf0r4pg2q6nhk7exy2a32c8hk3hns7lm4yvrf7ux6m8pr6y3vy3vtt75f356s2dyr4q576cq8n9k42va5ut\
+            rfqnw7ysnkgyytecfqzy034s2cxqzt0nwnzzkyun24a2ljuwqt8xd0k3q6sd0wm4zmexvnjn3pge7w98kkvq2xd\
+            yc2kv5aa2d2tekv6lke8f6jc6z4hf290ccq08plf4h3u2t8nllq9cyvya79"
         );
     }
 
