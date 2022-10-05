@@ -33,7 +33,7 @@ pub const BECH32_SCHEMA_ID_INFLATIONARY: &str =
 
 /// Schema identifier for RGB20 fungible asset allowing just asset transfers.
 pub const BECH32_SCHEMA_ID_SIMPLE: &str =
-    "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
+    "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s";
 
 /// Field types for RGB20 schemata
 ///
@@ -547,6 +547,16 @@ mod test {
     }
 
     #[test]
+    fn subschema_simple_id() {
+        let id = Schema::rgb20_simple().schema_id();
+        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_SIMPLE);
+        assert_eq!(
+            id.to_string(),
+            "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s"
+        );
+    }
+
+    #[test]
     fn schema_strict_encode() {
         let data = Schema::rgb20_root()
             .strict_serialize()
@@ -575,6 +585,9 @@ mod test {
     #[test]
     fn subschema_verify() {
         let status = Schema::rgb20_inflationary().schema_verify(&Schema::rgb20_root());
+        assert_eq!(status.validity(), Validity::Valid);
+
+        let status = Schema::rgb20_simple().schema_verify(&Schema::rgb20_root());
         assert_eq!(status.validity(), Validity::Valid);
     }
 }
