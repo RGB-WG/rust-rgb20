@@ -23,13 +23,13 @@ use rgb::ValidationScript;
 use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
 /// Schema identifier for full RGB20 fungible asset
-pub const SCHEMA_ID_BECH32: &str =
+pub const BECH32_SCHEMA_ID_ROOT: &str =
     "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
 
-/// Schema identifier for full RGB20 fungible asset subschema prohibiting burn &
-/// replace operations
-pub const SUBSCHEMA_ID_BECH32: &str =
-    "rgbsh1636y76cxrnsfqg7zjnl08f0kqt9j09tre2wfxzrrs86f76ssp7cqnn0yyf";
+/// Schema identifier for full RGB20 fungible asset allowing only inflation
+/// operation.
+pub const BECH32_SCHEMA_ID_INFLATIONARY: &str =
+    "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
 
 /// Field types for RGB20 schemata
 ///
@@ -149,29 +149,6 @@ fn type_system() -> TypeSystem {
     }
 }
 
-fn genesis() -> GenesisSchema {
-    use Occurrences::*;
-
-    GenesisSchema {
-        metadata: type_map! {
-            FieldType::Ticker => Once,
-            FieldType::Name => Once,
-            FieldType::Precision => Once,
-            FieldType::Timestamp => Once,
-            // We need this field in order to be able to verify pedersen
-            // commitments
-            FieldType::IssuedSupply => Once
-        },
-        owned_rights: type_map! {
-            OwnedRightType::Inflation => NoneOrMore,
-            OwnedRightType::OpenEpoch => NoneOrOnce,
-            OwnedRightType::Assets => NoneOrMore,
-            OwnedRightType::Renomination => NoneOrOnce
-        },
-        public_rights: none!(),
-    }
-}
-
 fn issue() -> TransitionSchema {
     use Occurrences::*;
 
@@ -243,7 +220,24 @@ pub fn schema() -> Schema {
     Schema {
         rgb_features: none!(),
         root_id: none!(),
-        genesis: genesis(),
+        genesis: GenesisSchema {
+            metadata: type_map! {
+                FieldType::Ticker => Once,
+                FieldType::Name => Once,
+                FieldType::Precision => Once,
+                FieldType::Timestamp => Once,
+                // We need this field in order to be able to verify pedersen
+                // commitments
+                FieldType::IssuedSupply => Once
+            },
+            owned_rights: type_map! {
+                OwnedRightType::Inflation => NoneOrMore,
+                OwnedRightType::OpenEpoch => NoneOrOnce,
+                OwnedRightType::Assets => NoneOrMore,
+                OwnedRightType::Renomination => NoneOrOnce
+            },
+            public_rights: none!(),
+        },
         type_system: type_system(),
         extensions: none!(),
         transitions: type_map! {
@@ -359,17 +353,31 @@ pub fn schema() -> Schema {
     }
 }
 
-/// Provides the only defined RGB20 subschema, which prohibits replace procedure
-/// and allows only burn operations
-pub fn subschema() -> Schema {
+/// Provides the only defined RGB20 subschema, which allows only inflation
+pub fn subschema_inflationary() -> Schema {
     use Occurrences::*;
 
     Schema {
         rgb_features: none!(),
-        root_id: SchemaId::from_str(SCHEMA_ID_BECH32)
+        root_id: SchemaId::from_str(BECH32_SCHEMA_ID_ROOT)
             .expect("Broken root schema ID for RGB20 sub-schema"),
-        type_system: type_system(),
-        genesis: genesis(),
+        type_system: none!(),
+        genesis: GenesisSchema {
+            metadata: type_map! {
+                FieldType::Ticker => Once,
+                FieldType::Name => Once,
+                FieldType::Precision => Once,
+                FieldType::Timestamp => Once,
+                // We need this field in order to be able to verify pedersen
+                // commitments
+                FieldType::IssuedSupply => Once
+            },
+            owned_rights: type_map! {
+                OwnedRightType::Inflation => NoneOrMore,
+                OwnedRightType::Assets => NoneOrMore
+            },
+            public_rights: none!(),
+        },
         extensions: none!(),
         transitions: type_map! {
             TransitionType::Issue => issue(),
@@ -383,18 +391,6 @@ pub fn subschema() -> Schema {
                 },
                 public_rights: none!()
             },
-            TransitionType::Epoch => TransitionSchema {
-                metadata: none!(),
-                closes: type_map! {
-                    OwnedRightType::OpenEpoch => Once
-                },
-                owned_rights: type_map! {
-                    OwnedRightType::BurnReplace => NoneOrOnce
-                },
-                public_rights: none!()
-            },
-            TransitionType::Burn => burn(),
-            TransitionType::Renomination => renomination(),
             // Allows split of rights if they were occasionally allocated to the
             // same UTXO, for instance both assets and issuance right. Without
             // this type of transition either assets or inflation rights will be
@@ -403,15 +399,11 @@ pub fn subschema() -> Schema {
                 metadata: type_map! {},
                 closes: type_map! {
                     OwnedRightType::Inflation => NoneOrMore,
-                    OwnedRightType::Assets => NoneOrMore,
-                    OwnedRightType::BurnReplace => NoneOrMore,
-                    OwnedRightType::Renomination => NoneOrOnce
+                    OwnedRightType::Assets => NoneOrMore
                 },
                 owned_rights: type_map! {
                     OwnedRightType::Inflation => NoneOrMore,
-                    OwnedRightType::Assets => NoneOrMore,
-                    OwnedRightType::BurnReplace => NoneOrMore,
-                    OwnedRightType::Renomination => NoneOrOnce
+                    OwnedRightType::Assets => NoneOrMore
                 },
                 public_rights: none!()
             }
@@ -426,14 +418,11 @@ pub fn subschema() -> Schema {
             // We need this b/c allocated amounts are hidden behind Pedersen
             // commitments
             FieldType::IssuedSupply => TypeRef::u64(),
-            // Supply in either burn or burn-and-replace procedure
-            FieldType::BurnedSupply => TypeRef::u64(),
             // While UNIX timestamps allow negative numbers; in context of RGB
             // Schema, assets can't be issued in the past before RGB or Bitcoin
             // even existed; so we prohibit all the dates before RGB release
             // This timestamp is equal to 10/10/2020 @ 2:37pm (UTC)
-            FieldType::Timestamp => TypeRef::i64(),
-            FieldType::BurnUtxo => TypeRef::new("OutPoint")
+            FieldType::Timestamp => TypeRef::i64()
         },
         owned_right_types: type_map! {
             // How much issuer can issue tokens on this path. If there is no
@@ -441,10 +430,7 @@ pub fn subschema() -> Schema {
             // must be used, as this will be a de-facto limit to the
             // issuance
             OwnedRightType::Inflation => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
-            OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
-            OwnedRightType::OpenEpoch => StateSchema::Declarative,
-            OwnedRightType::BurnReplace => StateSchema::Declarative,
-            OwnedRightType::Renomination => StateSchema::DataContainer
+            OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit)
         },
         public_right_types: none!(),
         script: ValidationScript::Embedded,
@@ -464,7 +450,7 @@ mod test {
     #[test]
     fn schema_id() {
         let id = schema().schema_id();
-        assert_eq!(id.to_string(), SCHEMA_ID_BECH32);
+        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_ROOT);
         assert_eq!(
             id.to_string(),
             "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8"
@@ -472,12 +458,12 @@ mod test {
     }
 
     #[test]
-    fn subschema_id() {
-        let id = subschema().schema_id();
-        assert_eq!(id.to_string(), SUBSCHEMA_ID_BECH32);
+    fn subschema_inflationary_id() {
+        let id = subschema_inflationary().schema_id();
+        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_INFLATIONARY);
         assert_eq!(
             id.to_string(),
-            "rgbsh1636y76cxrnsfqg7zjnl08f0kqt9j09tre2wfxzrrs86f76ssp7cqnn0yyf"
+            "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5"
         );
     }
 
@@ -506,7 +492,7 @@ mod test {
 
     #[test]
     fn subschema_verify() {
-        let status = subschema().schema_verify(&schema());
+        let status = subschema_inflationary().schema_verify(&schema());
         assert_eq!(status.validity(), Validity::Valid);
     }
 }
