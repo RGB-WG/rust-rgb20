@@ -18,12 +18,12 @@ use rgb::fungible::allocation::{
     AllocationMap, IntoSealValueMap, OutpointValueMap, OutpointValueVec,
 };
 use rgb::{
-    data, secp256k1zkp, value, Assignment, Consignment, Contract, Genesis, TypedAssignments,
+    data, secp256k1zkp, value, Assignment, Consignment, Contract, Genesis, Schema, TypedAssignments,
 };
 use stens::AsciiString;
 
-use crate::schema;
 use crate::schema::{FieldType, OwnedRightType};
+use crate::Rgb20Schemata;
 
 /// Extension trait for consignments defining RGB20-specific API.
 #[allow(clippy::too_many_arguments)]
@@ -102,7 +102,7 @@ impl<'consignment> Rgb20<'consignment> for Contract {
             );
         }
 
-        let schema = schema::schema();
+        let schema = Schema::rgb20_root();
 
         let genesis = Genesis::with(
             schema.schema_id(),

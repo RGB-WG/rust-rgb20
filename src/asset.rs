@@ -12,7 +12,9 @@
 use std::collections::btree_set;
 
 use bitcoin::OutPoint;
-use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId, OwnedValue};
+use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId, OwnedValue, Schema};
+
+use crate::Rgb20Schemata;
 
 /// RGB20 asset information.
 ///
@@ -72,7 +74,7 @@ where T: ConsignmentType
 
 impl Asset {
     fn validate(&self) -> Result<(), Error> {
-        if self.0.schema_id != crate::schema().schema_id() {
+        if self.0.schema_id != Schema::rgb20_root().schema_id() {
             Err(Error::WrongSchemaId)?;
         }
         // TODO: Validate the state

@@ -44,7 +44,7 @@ extern crate serde_crate as serde;
 #[cfg(feature = "serde")]
 extern crate serde_with;
 
-pub mod schema;
+mod schema;
 mod create;
 mod asset;
 mod transitions;
@@ -52,5 +52,5 @@ mod transitions;
 pub use asset::{Asset, Error};
 pub use create::Rgb20;
 pub use schema::{
-    schema, subschema_inflationary, BECH32_SCHEMA_ID_INFLATIONARY, BECH32_SCHEMA_ID_ROOT,
+    Rgb20Schemata, BECH32_SCHEMA_ID_INFLATIONARY, BECH32_SCHEMA_ID_ROOT, BECH32_SCHEMA_ID_SIMPLE,
 };
