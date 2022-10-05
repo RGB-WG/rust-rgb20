@@ -22,12 +22,12 @@ use rgb::vm::embedded::constants::*;
 use rgb::ValidationScript;
 use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
-/// Schema identifier for full RGB20 fungible asset
+/// Schema identifier for RGB20 fungible asset supporting all possible asset
+/// operations.
 pub const BECH32_SCHEMA_ID_ROOT: &str =
     "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
 
-/// Schema identifier for full RGB20 fungible asset allowing only inflation
-/// operation.
+/// Schema identifier for RGB20 fungible asset allowing only inflation operation.
 pub const BECH32_SCHEMA_ID_INFLATIONARY: &str =
     "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
 
@@ -353,7 +353,7 @@ pub fn schema() -> Schema {
     }
 }
 
-/// Provides the only defined RGB20 subschema, which allows only inflation
+/// RGB20 subschema which allows only inflation
 pub fn subschema_inflationary() -> Schema {
     use Occurrences::*;
 
@@ -430,6 +430,69 @@ pub fn subschema_inflationary() -> Schema {
             // must be used, as this will be a de-facto limit to the
             // issuance
             OwnedRightType::Inflation => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
+            OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit)
+        },
+        public_right_types: none!(),
+        script: ValidationScript::Embedded,
+        override_rules: OverrideRules::AllowAnyVm,
+    }
+}
+
+/// RGB20 subschema which allows simple asset transfers and no asset
+/// modifications (renomination, inflation, burn & replace procedures).
+pub fn subschema_simple() -> Schema {
+    use Occurrences::*;
+
+    Schema {
+        rgb_features: none!(),
+        root_id: SchemaId::from_str(BECH32_SCHEMA_ID_ROOT)
+            .expect("Broken root schema ID for RGB20 sub-schema"),
+        type_system: none!(),
+        genesis: GenesisSchema {
+            metadata: type_map! {
+                FieldType::Ticker => Once,
+                FieldType::Name => Once,
+                FieldType::Precision => Once,
+                FieldType::Timestamp => Once,
+                // We need this field in order to be able to verify pedersen
+                // commitments
+                FieldType::IssuedSupply => Once
+            },
+            owned_rights: type_map! {
+                OwnedRightType::Assets => NoneOrMore
+            },
+            public_rights: none!(),
+        },
+        extensions: none!(),
+        transitions: type_map! {
+            TransitionType::Transfer => TransitionSchema {
+                metadata: none!(),
+                closes: type_map! {
+                    OwnedRightType::Assets => OnceOrMore
+                },
+                owned_rights: type_map! {
+                    OwnedRightType::Assets => NoneOrMore
+                },
+                public_rights: none!()
+            }
+        },
+        field_types: type_map! {
+            // Rational: if we will use just 26 letters of English alphabet (and
+            // we are not limited by them), we will have 26^8 possible tickers,
+            // i.e. > 208 trillions, which is sufficient amount
+            FieldType::Ticker => TypeRef::ascii_string(),
+            FieldType::Name => TypeRef::ascii_string(),
+            FieldType::Precision => TypeRef::u8(),
+            // We need this b/c allocated amounts are hidden behind Pedersen
+            // commitments
+            FieldType::IssuedSupply => TypeRef::u64(),
+            // While UNIX timestamps allow negative numbers; in context of RGB
+            // Schema, assets can't be issued in the past before RGB or Bitcoin
+            // even existed; so we prohibit all the dates before RGB release
+            // This timestamp is equal to 10/10/2020 @ 2:37pm (UTC)
+            FieldType::Timestamp => TypeRef::i64()
+        },
+        owned_right_types: type_map! {
             OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit)
         },
         public_right_types: none!(),
