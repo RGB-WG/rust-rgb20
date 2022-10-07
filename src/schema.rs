@@ -22,19 +22,6 @@ use rgb::vm::embedded::constants::*;
 use rgb::ValidationScript;
 use stens::{PrimitiveType, StructField, TypeRef, TypeSystem};
 
-/// Schema identifier for RGB20 fungible asset supporting all possible asset
-/// operations.
-pub const BECH32_SCHEMA_ID_ROOT: &str =
-    "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
-
-/// Schema identifier for RGB20 fungible asset allowing only inflation operation.
-pub const BECH32_SCHEMA_ID_INFLATIONARY: &str =
-    "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
-
-/// Schema identifier for RGB20 fungible asset allowing just asset transfers.
-pub const BECH32_SCHEMA_ID_SIMPLE: &str =
-    "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s";
-
 /// Field types for RGB20 schemata
 ///
 /// Subset of known RGB schema pre-defined types applicable to fungible assets.
@@ -220,6 +207,19 @@ fn renomination() -> TransitionSchema {
 /// Trait extension adding RGB20 schema constructors to the RGB Core Lib
 /// [`Schema`] object.
 pub trait Rgb20Schemata {
+    /// Schema identifier for RGB20 fungible asset supporting all possible asset
+    /// operations.
+    const RGB20_ROOT_BECH32: &'static str =
+        "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
+
+    /// Schema identifier for RGB20 fungible asset allowing only inflation operation.
+    const RGB20_INFLATIONARY_BECH32: &'static str =
+        "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
+
+    /// Schema identifier for RGB20 fungible asset allowing just asset transfers.
+    const RGB20_SIMPLE_BECH32: &'static str =
+        "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s";
+
     /// Builds & returns complete RGB20 schema (root schema object)
     fn rgb20_root() -> Schema;
 
@@ -376,7 +376,7 @@ impl Rgb20Schemata for Schema {
 
         Schema {
             rgb_features: none!(),
-            root_id: SchemaId::from_str(BECH32_SCHEMA_ID_ROOT)
+            root_id: SchemaId::from_str(Schema::RGB20_ROOT_BECH32)
                 .expect("Broken root schema ID for RGB20 sub-schema"),
             type_system: none!(),
             genesis: GenesisSchema {
@@ -460,7 +460,7 @@ impl Rgb20Schemata for Schema {
 
         Schema {
             rgb_features: none!(),
-            root_id: SchemaId::from_str(BECH32_SCHEMA_ID_ROOT)
+            root_id: SchemaId::from_str(Schema::RGB20_ROOT_BECH32)
                 .expect("Broken root schema ID for RGB20 sub-schema"),
             type_system: none!(),
             genesis: GenesisSchema {
@@ -529,7 +529,7 @@ mod test {
     #[test]
     fn schema_id() {
         let id = Schema::rgb20_root().schema_id();
-        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_ROOT);
+        assert_eq!(id.to_string(), Schema::RGB20_ROOT_BECH32);
         assert_eq!(
             id.to_string(),
             "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8"
@@ -539,7 +539,7 @@ mod test {
     #[test]
     fn subschema_inflationary_id() {
         let id = Schema::rgb20_inflationary().schema_id();
-        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_INFLATIONARY);
+        assert_eq!(id.to_string(), Schema::RGB20_INFLATIONARY_BECH32);
         assert_eq!(
             id.to_string(),
             "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5"
@@ -549,7 +549,7 @@ mod test {
     #[test]
     fn subschema_simple_id() {
         let id = Schema::rgb20_simple().schema_id();
-        assert_eq!(id.to_string(), BECH32_SCHEMA_ID_SIMPLE);
+        assert_eq!(id.to_string(), Schema::RGB20_SIMPLE_BECH32);
         assert_eq!(
             id.to_string(),
             "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s"

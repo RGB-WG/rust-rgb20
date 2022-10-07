@@ -51,6 +51,4 @@ mod transitions;
 
 pub use asset::{Asset, Error};
 pub use create::Rgb20;
-pub use schema::{
-    Rgb20Schemata, BECH32_SCHEMA_ID_INFLATIONARY, BECH32_SCHEMA_ID_ROOT, BECH32_SCHEMA_ID_SIMPLE,
-};
+pub use schema::Rgb20Schemata;
