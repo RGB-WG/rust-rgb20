@@ -216,15 +216,15 @@ pub trait Rgb20Schemata {
     /// Schema identifier for RGB20 fungible asset supporting all possible asset
     /// operations.
     const RGB20_ROOT_BECH32: &'static str =
-        "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8";
+        "rgbsh1hacf8gg863veu292hdnttynqzk5xdvyk5q2fxep3e85j4ttzd05s2j4ern";
 
     /// Schema identifier for RGB20 fungible asset allowing only inflation operation.
     const RGB20_INFLATIONARY_BECH32: &'static str =
-        "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5";
+        "rgbsh1qmts2pmfxt9e6tpuevk2v0dza30d9v4n0cq6vtm0jtppnyz5xrss4gj9wd";
 
     /// Schema identifier for RGB20 fungible asset allowing just asset transfers.
     const RGB20_SIMPLE_BECH32: &'static str =
-        "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s";
+        "rgbsh13c3e8ywrmsu9j0k3er0lgzp9memn5c55rw5svf0l9n3sfntv76zqehteur";
 
     /// Builds & returns complete RGB20 schema (root schema object)
     fn rgb20_root() -> Schema;
@@ -539,7 +539,7 @@ mod test {
         assert_eq!(id.to_string(), Schema::RGB20_ROOT_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh18kp34t5nn5zu4hz6g7lqjdjskw8aaf84ecdntrtrdvzs7gn3rnzskscfq8"
+            "rgbsh1hacf8gg863veu292hdnttynqzk5xdvyk5q2fxep3e85j4ttzd05s2j4ern"
         );
     }
 
@@ -549,7 +549,7 @@ mod test {
         assert_eq!(id.to_string(), Schema::RGB20_INFLATIONARY_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1wu3c89xkwtgjf5eh2sah6phrw9jfrq6cf3c8hsltq74x737tk7msjxa0p5"
+            "rgbsh1qmts2pmfxt9e6tpuevk2v0dza30d9v4n0cq6vtm0jtppnyz5xrss4gj9wd"
         );
     }
 
@@ -559,7 +559,7 @@ mod test {
         assert_eq!(id.to_string(), Schema::RGB20_SIMPLE_BECH32);
         assert_eq!(
             id.to_string(),
-            "rgbsh1pxeg6w0n29cmaw6cl2chp5lh4tygxeqqyufr2rzkhppvtl8xqaaqqhjh3s"
+            "rgbsh13c3e8ywrmsu9j0k3er0lgzp9memn5c55rw5svf0l9n3sfntv76zqehteur"
         );
     }
 
@@ -582,10 +582,11 @@ mod test {
         );
         assert_eq!(
             bech32data,
-            "z1qxz4zwcwcgcqcl2d2tgnrzqtwq33swqzfvt43zkyepg49ky655klwg7cfefgg4pf38ewe78em8u6qwq5rgwx\
-            ah03mf0r4pg2q6nhk7exy2a32c8hk3hns7lm4yvrf7ux6m8pr6y3vy3vtt75f356s2dyr4q576cq8n9k42va5ut\
-            rfqnw7ysnkgyytecfqzy034s2cxqzt0nwnzzkyun24a2ljuwqt8xd0k3q6sd0wm4zmexvnjn3pge7w98kkvq2xd\
-            yc2kv5aa2d2tekv6lke8f6jc6z4hf290ccq08plf4h3u2t8nllq9cyvya79"
+            "z1qxz4qjcwsgcpqld5lp94e4rcqx87xnskrmqe3vy3qscar828q8wuzp3cyp6kvjhaysfy4736xwhl8hjs3shg\
+            6fdk7yu5h5jmjsnvj5gp4w8rvvx8a6fy2jtueg2q9pxctl3sxd0cxqqvephjqk46ew5qgxdr296zmt4eeatts6r\
+            d50n694jmltsn4gszw2rgjaqv2xjnw8eelyjvfvwq4eh0rzfqr4sks2j4g7xdqjw6adtuxf868xasvawtw4llwm\
+            6pcntxhjdnhtw40l7s5quemlx7h2j4eu7cc33dfs3s4tt5xthhfldayax7d0yxd74lulmuplhvqe8sr54gn3mcq\
+            t6sylhqf2u"
         );
     }
 
