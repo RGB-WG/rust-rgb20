@@ -60,9 +60,6 @@ pub enum FieldType {
 
     /// Proofs of the burned supply
     HistoryProof = FIELD_TYPE_HISTORY_PROOF,
-
-    /// Media format for the information proving burned supply
-    HistoryProofFormat = FIELD_TYPE_HISTORY_PROOF_FORMAT,
 }
 
 impl From<FieldType> for rgb::schema::FieldType {
@@ -139,7 +136,13 @@ fn type_system() -> TypeSystem {
             StructField::with("Txid"),
             StructField::primitive(PrimitiveType::U16),
         },
-        "Txid" :: { StructField::array(PrimitiveType::U8, 32) }
+        "Txid" :: { StructField::array(PrimitiveType::U8, 32) },
+        "HistoryProof" :: {
+            // Format of the proof defined as an ASCII string
+            StructField::ascii_string(),
+            // Data for the proof
+            StructField::bytes()
+        }
     }
 }
 
@@ -175,7 +178,6 @@ fn burn() -> TransitionSchema {
             // mistake this will be impossible, so we allow to have
             // multiple burned UTXOs as a part of a single operation
             FieldType::BurnUtxo => OnceOrMore,
-            FieldType::HistoryProofFormat => Once,
             FieldType::HistoryProof => NoneOrMore
         },
         closes: type_map! {
@@ -298,7 +300,6 @@ impl Rgb20Schemata for Schema {
                         // We need this field in order to be able to verify pedersen
                         // commitments
                         FieldType::IssuedSupply => Once,
-                        FieldType::HistoryProofFormat => Once,
                         FieldType::HistoryProof => NoneOrMore
                     },
                     closes: type_map! {
@@ -357,7 +358,7 @@ impl Rgb20Schemata for Schema {
                 // even existed; so we prohibit all the dates before RGB release
                 // This timestamp is equal to 10/10/2020 @ 2:37pm (UTC)
                 FieldType::Timestamp => TypeRef::i64(),
-                FieldType::HistoryProof => TypeRef::bytes(),
+                FieldType::HistoryProof => TypeRef::new("HistoryProof"),
                 FieldType::BurnUtxo => TypeRef::new("OutPoint")
             },
             owned_right_types: type_map! {
