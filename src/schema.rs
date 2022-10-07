@@ -42,6 +42,9 @@ pub enum FieldType {
     /// Decimal precision
     Precision = FIELD_TYPE_PRECISION,
 
+    /// Ricardian contract for the asset
+    Contract = FIELD_TYPE_CONTRACT_TEXT,
+
     /// Supply issued with the genesis, secondary issuance or burn & replace
     /// state transition
     IssuedSupply = FIELD_TYPE_ISSUED_SUPPLY,
@@ -192,6 +195,7 @@ fn renomination() -> TransitionSchema {
         metadata: type_map! {
             FieldType::Ticker => NoneOrOnce,
             FieldType::Name => NoneOrOnce,
+            FieldType::Contract => NoneOrOnce,
             FieldType::Precision => NoneOrOnce
         },
         closes: type_map! {
@@ -242,6 +246,7 @@ impl Rgb20Schemata for Schema {
                 metadata: type_map! {
                     FieldType::Ticker => Once,
                     FieldType::Name => Once,
+                    FieldType::Contract => NoneOrOnce,
                     FieldType::Precision => Once,
                     FieldType::Timestamp => Once,
                     // We need this field in order to be able to verify pedersen
@@ -339,7 +344,8 @@ impl Rgb20Schemata for Schema {
                 // Ricardian contract, up to 64kb. If the contract doesn't fit, a
                 // double SHA256 hash and URL should be used instead, pointing to
                 // the full contract text, where hash must be represented by a
-                // hexadecimal string, optionally followed by `\n` and text URL
+                // hexadecimal string, optionally followed by `\n` and text URL.
+                FieldType::Contract => TypeRef::ascii_string(),
                 FieldType::Precision => TypeRef::u8(),
                 // We need this b/c allocated amounts are hidden behind Pedersen
                 // commitments
