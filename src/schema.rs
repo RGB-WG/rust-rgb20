@@ -369,7 +369,7 @@ impl Rgb20Schemata for Schema {
                 OwnedRightType::Assets => StateSchema::DiscreteFiniteField(DiscreteFiniteFieldFormat::Unsigned64bit),
                 OwnedRightType::OpenEpoch => StateSchema::Declarative,
                 OwnedRightType::BurnReplace => StateSchema::Declarative,
-                OwnedRightType::Renomination => StateSchema::DataContainer
+                OwnedRightType::Renomination => StateSchema::Declarative
             },
             public_right_types: none!(),
             script: ValidationScript::Embedded,
