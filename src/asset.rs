@@ -12,9 +12,38 @@
 use std::collections::btree_set;
 
 use bitcoin::OutPoint;
-use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId, OwnedValue, Schema};
+use chrono::{Date, Utc};
+use rgb::{
+    ConsignmentType, ContractId, ContractState, InmemConsignment, NodeId, OwnedValue, Schema,
+    SchemaId,
+};
 
 use crate::Rgb20Schemata;
+
+/// Type of the subschema under which asset is created
+#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+#[non_exhaustive]
+pub enum Subschema {
+    /// Simple asset schema. Assets to not support inflation and renomination.
+    Simple,
+
+    /// Inflationary schema: asset can have secondary issuance, can be burned
+    /// or replaced - but can not be renominated.
+    Inflationary,
+
+    /// Root RGB20 schema supporting all asset operations
+    Full,
+}
+
+impl Subschema {
+    pub fn bech32(self) -> &'static str {
+        match self {
+            Subschema::Simple => Schema::RGB20_SIMPLE_BECH32,
+            Subschema::Inflationary => Schema::RGB20_INFLATIONARY_BECH32,
+            Subschema::Full => Schema::RGB20_ROOT_BECH32,
+        }
+    }
+}
 
 /// RGB20 asset information.
 ///
@@ -40,9 +69,44 @@ use crate::Rgb20Schemata;
 /// In both (2) and (3) case there is no need to persist the structure; genesis
 /// /consignment should be persisted instead and the structure must be
 /// reconstructed each time from that data upon the launch
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+#[derive(Getters, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 #[derive(StrictEncode, StrictDecode)]
-pub struct Asset(ContractState);
+pub struct Asset {
+    #[getter(as_copy)]
+    id: ContractId,
+
+    #[getter(as_copy)]
+    subschema: Subschema,
+
+    #[getter(as_copy)]
+    issued: Date<Utc>,
+
+    ticker: String,
+    name: String,
+    contract: String,
+    #[getter(as_copy)]
+    precision: u8,
+
+    known_allocations: Vec<(OutPoint, u64)>,
+    known_supply: u64,
+    #[getter(as_copy)]
+    max_supply: u64,
+    #[getter(as_copy)]
+    is_total_supply_known: bool,
+    #[getter(as_copy)]
+    burned_supply: u64,
+    #[getter(as_copy)]
+    replaced_supply: u64,
+
+    #[getter(as_copy)]
+    can_be_renominated: bool,
+    #[getter(as_copy)]
+    can_be_inflated: bool,
+    #[getter(as_copy)]
+    can_be_burned: bool,
+    #[getter(as_copy)]
+    can_be_replaced: bool,
+}
 
 impl Asset {
     /// Lists all known allocations for the given bitcoin transaction
