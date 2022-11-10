@@ -14,12 +14,12 @@ use std::collections::BTreeMap;
 use bitcoin::OutPoint;
 use chrono::Utc;
 use lnpbp::chain::Chain;
-use rgb::fungible::allocation::{
-    AllocationMap, IntoSealValueMap, OutpointValueMap, OutpointValueVec,
-};
+use rgb::fungible::allocation::{AllocationMap, OutpointValueMap, OutpointValueVec};
 use rgb::{
-    data, secp256k1zkp, value, Assignment, Consignment, Contract, Genesis, TypedAssignments,
+    data, secp256k1zkp, value, Assignment, Consignment, Contract, Genesis, SealValueMap,
+    TypedAssignments,
 };
+use seals::txout::CloseMethod;
 use stens::AsciiString;
 
 use crate::schema;
@@ -36,6 +36,7 @@ pub trait Rgb20<'consignment>: Consignment<'consignment> {
         precision: u8,
         allocations: OutpointValueVec,
         inflation: OutpointValueMap,
+        method: CloseMethod,
         renomination: Option<OutPoint>,
         epoch: Option<OutPoint>,
     ) -> Contract;
@@ -49,6 +50,7 @@ impl<'consignment> Rgb20<'consignment> for Contract {
         precision: u8,
         allocations: OutpointValueVec,
         inflation: OutpointValueMap,
+        method: CloseMethod,
         renomination: Option<OutPoint>,
         epoch: Option<OutPoint>,
     ) -> Contract {
@@ -60,7 +62,7 @@ impl<'consignment> Rgb20<'consignment> for Contract {
             FieldType::Timestamp => field!(I64, now)
         };
 
-        let issued_supply = allocations.sum();
+        let issued_supply = allocations.iter().map(|v| v.value).sum();
         let mut owned_rights = BTreeMap::new();
         owned_rights.insert(
             OwnedRightType::Assets.into(),
@@ -69,7 +71,15 @@ impl<'consignment> Rgb20<'consignment> for Contract {
                     value: issued_supply,
                     blinding: secp256k1zkp::key::ONE_KEY.into(),
                 }],
-                allocations.into_seal_value_map(),
+                allocations
+                    .into_iter()
+                    .map(|outpoint_value| {
+                        (
+                            rgb::seal::Revealed::new(method, outpoint_value.outpoint),
+                            outpoint_value.value,
+                        )
+                    })
+                    .collect(),
                 empty![],
             ),
         );
@@ -78,7 +88,11 @@ impl<'consignment> Rgb20<'consignment> for Contract {
         if !inflation.is_empty() {
             owned_rights.insert(
                 OwnedRightType::Inflation.into(),
-                inflation.into_assignments(),
+                inflation
+                    .into_iter()
+                    .map(|(outpoint, value)| (rgb::seal::Revealed::new(method, outpoint), value))
+                    .collect::<SealValueMap>()
+                    .into_assignments(),
             );
         }
 

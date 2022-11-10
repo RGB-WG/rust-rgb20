@@ -23,6 +23,7 @@ use lnpbp::chain::Chain;
 use rgb::fungible::allocation::{AllocatedValue, OutpointValue, UtxobValue};
 use rgb::{Consignment, Contract, IntoRevealedSeal, StateTransfer};
 use rgb20::{Asset, Rgb20};
+use seals::txout::CloseMethod;
 use stens::AsciiString;
 use strict_encoding::{StrictDecode, StrictEncode};
 
@@ -66,6 +67,9 @@ pub enum Command {
         #[clap(short, long)]
         inflation: Vec<OutpointValue>,
 
+        /// Method for seal closing ('tapret1st' or 'opret1st')
+        #[clap(short, long, default_value = "tapret1st")]
+        method: CloseMethod,
         /// Enable renomination procedure; parameter takes argument in form of
         /// <txid>:<vout> specifying output controlling renomination right
         #[clap(short, long)]
@@ -112,6 +116,7 @@ fn main() -> Result<(), String> {
             precision,
             allocation,
             inflation,
+            method,
             renomination,
             epoch,
         } => {
@@ -133,6 +138,7 @@ fn main() -> Result<(), String> {
                 precision,
                 allocation,
                 inflation,
+                method,
                 renomination,
                 epoch,
             );
