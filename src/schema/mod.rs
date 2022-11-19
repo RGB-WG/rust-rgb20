@@ -11,4 +11,7 @@
 
 //! RGB20 schemata defining fungible asset smart contract prototypes.
 
-pub mod new;
+mod new;
+pub mod legacy;
+
+pub use new::{FieldType, OwnedRightType, Rgb20Schemata, TransitionType};

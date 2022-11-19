@@ -14,7 +14,7 @@ use std::collections::btree_set;
 use bitcoin::OutPoint;
 use rgb::{ConsignmentType, ContractState, InmemConsignment, NodeId, OwnedValue, Schema};
 
-use crate::Rgb20Schemata;
+use crate::schema::Rgb20Schemata;
 
 /// RGB20 asset information.
 ///
