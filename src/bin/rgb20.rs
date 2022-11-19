@@ -16,12 +16,15 @@ extern crate clap;
 extern crate serde_crate as serde;
 
 use std::collections::BTreeMap;
-use std::path::PathBuf;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use std::{fs, io};
 
 use bitcoin::OutPoint;
 use clap::Parser;
 use colored::Colorize;
+use lnpbp::bech32::Bech32ZipString;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::{AllocatedValue, OutpointValue, UtxobValue};
 use rgb::{Consignment, Contract, IntoRevealedSeal, StateTransfer};
@@ -58,6 +61,7 @@ impl FromStr for SchemaName {
 pub enum ExportFormat {
     Binary,
     Bech32,
+    Base64,
     Json,
     Yaml,
 }
@@ -69,6 +73,7 @@ impl FromStr for ExportFormat {
         Ok(match s {
             "bin" => ExportFormat::Binary,
             "bech32" => ExportFormat::Bech32,
+            "base64" => ExportFormat::Base64,
             "json" => ExportFormat::Json,
             "yaml" => ExportFormat::Yaml,
             wrong => return Err(InvalidName(wrong.to_owned())),
@@ -179,7 +184,27 @@ fn main() -> Result<(), String> {
             format,
             schema,
         } => {
-            todo!()
+            let mut fd = open_file_or_stdout(file).unwrap();
+            let schema = match schema {
+                SchemaName::LegacyBasic => rgb20::schema(),
+                SchemaName::LegacyComplete => rgb20::subschema(),
+            };
+            match format {
+                ExportFormat::Binary => {
+                    schema.strict_encode(&mut fd).unwrap();
+                }
+                ExportFormat::Bech32 => {
+                    let data = schema.strict_serialize().unwrap();
+                    fd.write_all(data.bech32_zip_string().as_bytes()).unwrap()
+                }
+                ExportFormat::Base64 => {
+                    let data = schema.strict_serialize().unwrap();
+                    fd.write_all(base64::encode(&data).as_bytes()).unwrap()
+                }
+                ExportFormat::Json => serde_json::to_writer(&mut fd, &schema).unwrap(),
+                ExportFormat::Yaml => serde_yaml::to_writer(&mut fd, &schema).unwrap(),
+            }
+            fd.flush().unwrap();
         }
 
         Command::Issue {
@@ -281,4 +306,16 @@ fn ticker_validator(name: &str) -> Result<(), String> {
     } else {
         Ok(())
     }
+}
+
+pub fn open_file_or_stdout(
+    filename: Option<impl AsRef<Path>>,
+) -> Result<Box<dyn Write>, io::Error> {
+    Ok(match filename {
+        Some(filename) => {
+            let file = fs::File::create(filename)?;
+            Box::new(file)
+        }
+        None => Box::new(io::stdout()),
+    })
 }

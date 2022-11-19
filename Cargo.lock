@@ -1207,6 +1207,7 @@ name = "rgb20"
 version = "0.8.0"
 dependencies = [
  "amplify",
+ "base64-compat",
  "bitcoin",
  "bp-seals",
  "chrono",
