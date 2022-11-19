@@ -51,4 +51,4 @@ mod transitions;
 
 pub use asset::{Asset, Error};
 pub use create::Rgb20;
-pub use schema::Rgb20Schemata;
+pub use schema::{FieldType, OwnedRightType, Rgb20Schemata};

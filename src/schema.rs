@@ -146,27 +146,6 @@ fn type_system() -> TypeSystem {
     }
 }
 
-fn issue() -> TransitionSchema {
-    use Occurrences::*;
-
-    TransitionSchema {
-        metadata: type_map! {
-            // We need this field in order to be able to verify pedersen
-            // commitments
-            FieldType::IssuedSupply => Once
-        },
-        closes: type_map! {
-            OwnedRightType::Inflation => OnceOrMore
-        },
-        owned_rights: type_map! {
-            OwnedRightType::Inflation => NoneOrMore,
-            OwnedRightType::OpenEpoch => NoneOrOnce,
-            OwnedRightType::Assets => NoneOrMore
-        },
-        public_rights: none!(),
-    }
-}
-
 fn burn() -> TransitionSchema {
     use Occurrences::*;
 
@@ -266,7 +245,22 @@ impl Rgb20Schemata for Schema {
             type_system: type_system(),
             extensions: none!(),
             transitions: type_map! {
-                TransitionType::Issue => issue(),
+                TransitionType::Issue => TransitionSchema {
+                    metadata: type_map! {
+                        // We need this field in order to be able to verify pedersen
+                        // commitments
+                        FieldType::IssuedSupply => Once
+                    },
+                    closes: type_map! {
+                        OwnedRightType::Inflation => OnceOrMore
+                    },
+                    owned_rights: type_map! {
+                        OwnedRightType::Inflation => NoneOrMore,
+                        OwnedRightType::OpenEpoch => NoneOrOnce,
+                        OwnedRightType::Assets => NoneOrMore
+                    },
+                    public_rights: none!(),
+                },
                 TransitionType::Transfer => TransitionSchema {
                     metadata: none!(),
                     closes: type_map! {
@@ -404,7 +398,21 @@ impl Rgb20Schemata for Schema {
             },
             extensions: none!(),
             transitions: type_map! {
-                TransitionType::Issue => issue(),
+                TransitionType::Issue => TransitionSchema {
+                    metadata: type_map! {
+                        // We need this field in order to be able to verify pedersen
+                        // commitments
+                        FieldType::IssuedSupply => Once
+                    },
+                    closes: type_map! {
+                        OwnedRightType::Inflation => OnceOrMore
+                    },
+                    owned_rights: type_map! {
+                        OwnedRightType::Inflation => NoneOrMore,
+                        OwnedRightType::Assets => NoneOrMore
+                    },
+                    public_rights: none!(),
+                },
                 TransitionType::Transfer => TransitionSchema {
                     metadata: none!(),
                     closes: type_map! {
