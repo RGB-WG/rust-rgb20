@@ -22,8 +22,7 @@ use rgb::{
 };
 use stens::AsciiString;
 
-use crate::schema::{FieldType, OwnedRightType};
-use crate::Rgb20Schemata;
+use crate::{FieldType, OwnedRightType, Rgb20Schemata};
 
 /// Extension trait for consignments defining RGB20-specific API.
 #[allow(clippy::too_many_arguments)]

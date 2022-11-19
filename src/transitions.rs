@@ -16,8 +16,7 @@ use rgb::fungible::allocation::{AllocationMap, AllocationValueMap, AllocationVal
 use rgb::prelude::*;
 use seals::txout::ExplicitSeal;
 
-use super::schema::{OwnedRightType, TransitionType};
-use super::Asset;
+use crate::{Asset, OwnedRightType, TransitionType};
 
 /// Errors happening during construction of RGB-20 asset state transitions
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display, Error)]

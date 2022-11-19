@@ -9,8 +9,6 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-//! RGB20 schemata defining fungible asset smart contract prototypes.
-
 use std::str::FromStr;
 
 use rgb::schema::{
