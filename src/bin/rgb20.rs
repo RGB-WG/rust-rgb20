@@ -27,7 +27,7 @@ use colored::Colorize;
 use lnpbp::bech32::Bech32ZipString;
 use lnpbp::chain::Chain;
 use rgb::fungible::allocation::{AllocatedValue, OutpointValue, UtxobValue};
-use rgb::{Consignment, Contract, IntoRevealedSeal, StateTransfer};
+use rgb::{Consignment, Contract, IntoRevealedSeal, Schema, StateTransfer};
 use rgb20::{Asset, Rgb20};
 use seals::txout::CloseMethod;
 use stens::AsciiString;
@@ -43,6 +43,15 @@ pub struct InvalidName(String);
 pub enum SchemaName {
     LegacyBasic,
     LegacyComplete,
+}
+
+impl SchemaName {
+    pub fn schema(&self) -> Schema {
+        match self {
+            SchemaName::LegacyBasic => rgb20::schema(),
+            SchemaName::LegacyComplete => rgb20::subschema(),
+        }
+    }
 }
 
 impl FromStr for SchemaName {
@@ -101,19 +110,9 @@ pub struct Opts {
 
 #[derive(Subcommand, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum Command {
-    /// Export schema
-    Schema {
-        /// File to save the schema to. If no file is given, exports to STDOUT.
-        file: Option<PathBuf>,
-
-        /// Export format
-        #[clap(short, long, default_value = "yaml")]
-        format: ExportFormat,
-
-        /// Name of an RGB20 schema to export
-        #[clap(short, long, default_value = "legacy-complete")]
-        schema: SchemaName,
-    },
+    /// Schema-related commands
+    #[clap(subcommand)]
+    Schema(SchemaCommand),
 
     /// Issue a new asset
     Issue {
@@ -175,20 +174,46 @@ pub enum Command {
     },
 }
 
+/// Schema commands
+#[derive(Subcommand, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub enum SchemaCommand {
+    /// Print out shema ID
+    Id {
+        /// Name of an RGB20 schema
+        #[clap(short, long, default_value = "legacy-complete")]
+        schema: SchemaName,
+    },
+
+    /// Export schema
+    Export {
+        /// File to save the schema to. If no file is given, exports to STDOUT.
+        file: Option<PathBuf>,
+
+        /// Export format
+        #[clap(short, long, default_value = "yaml")]
+        format: ExportFormat,
+
+        /// Name of an RGB20 schema to export
+        #[clap(short, long, default_value = "legacy-complete")]
+        schema: SchemaName,
+    },
+}
+
 fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
     match opts.command {
-        Command::Schema {
+        Command::Schema(SchemaCommand::Id { schema }) => {
+            println!("{}", schema.schema().schema_id());
+        }
+
+        Command::Schema(SchemaCommand::Export {
             file,
             format,
             schema,
-        } => {
+        }) => {
             let mut fd = open_file_or_stdout(file).unwrap();
-            let schema = match schema {
-                SchemaName::LegacyBasic => rgb20::schema(),
-                SchemaName::LegacyComplete => rgb20::subschema(),
-            };
+            let schema = schema.schema();
             match format {
                 ExportFormat::Binary => {
                     schema.strict_encode(&mut fd).unwrap();
