@@ -10,11 +10,14 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 #[macro_use]
+extern crate amplify;
+#[macro_use]
 extern crate clap;
 extern crate serde_crate as serde;
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use bitcoin::OutPoint;
 use clap::Parser;
@@ -26,6 +29,52 @@ use rgb20::{Asset, Rgb20};
 use seals::txout::CloseMethod;
 use stens::AsciiString;
 use strict_encoding::{StrictDecode, StrictEncode};
+
+/// invalid argument name `{0}`
+#[derive(Clone, Debug, Display, Error)]
+#[display(doc_comments)]
+pub struct InvalidName(String);
+
+#[derive(ArgEnum, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+#[non_exhaustive]
+pub enum SchemaName {
+    LegacyBasic,
+    LegacyComplete,
+}
+
+impl FromStr for SchemaName {
+    type Err = InvalidName;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "legacy-basic" => SchemaName::LegacyBasic,
+            "legacy-complete" => SchemaName::LegacyComplete,
+            wrong => return Err(InvalidName(wrong.to_owned())),
+        })
+    }
+}
+
+#[derive(ArgEnum, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+pub enum ExportFormat {
+    Binary,
+    Bech32,
+    Json,
+    Yaml,
+}
+
+impl FromStr for ExportFormat {
+    type Err = InvalidName;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "bin" => ExportFormat::Binary,
+            "bech32" => ExportFormat::Bech32,
+            "json" => ExportFormat::Json,
+            "yaml" => ExportFormat::Yaml,
+            wrong => return Err(InvalidName(wrong.to_owned())),
+        })
+    }
+}
 
 #[derive(Parser, Clone, Debug)]
 #[clap(
@@ -47,6 +96,21 @@ pub struct Opts {
 
 #[derive(Subcommand, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum Command {
+    /// Export schema
+    Schema {
+        /// File to save the schema to. If no file is given, exports to STDOUT.
+        file: Option<PathBuf>,
+
+        /// Export format
+        #[clap(short, long, default_value = "yaml")]
+        format: ExportFormat,
+
+        /// Name of an RGB20 schema to export
+        #[clap(short, long, default_value = "legacy-complete")]
+        schema: SchemaName,
+    },
+
+    /// Issue a new asset
     Issue {
         /// Asset ticker (up to 8 characters, always converted to uppercase)
         #[clap(validator = ticker_validator)]
@@ -110,6 +174,14 @@ fn main() -> Result<(), String> {
     let opts = Opts::parse();
 
     match opts.command {
+        Command::Schema {
+            file,
+            format,
+            schema,
+        } => {
+            todo!()
+        }
+
         Command::Issue {
             ticker,
             name,
