@@ -1,6 +1,6 @@
 [package]
 name = "rgb20"
-version = "0.8.0"
+version = "0.9.0-rc.1"
 license = "MIT"
 authors = ["Dr Maxim Orlovsky <orlovsky@pandoracore.com>"]
 description = "RGB-20 Library: fungible digital assets for bitcoin & lightning"
@@ -24,24 +24,24 @@ required-features = ["cli"]
 
 [dependencies]
 amplify = "3.13.0"
-strict_encoding = "~0.8.0"
-stens = "0.7.1"
-lnpbp = "0.8.0"
-bp-seals = "0.8.0"
-rgb-std = { version = "0.8.0", features = ["wallet"] }
-bitcoin = "0.28.1"
+strict_encoding = "~0.9.0-rc.2"
+stens = "0.9.0-rc.1"
+lnpbp = "0.9.0-rc.1"
+bp-seals = "0.9.0-rc.1"
+rgb-std = { version = "0.9.0-rc.1", features = ["wallet"] }
+bitcoin = "0.29.2"
 chrono = "0.4"
 url = "2.1"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
-serde_with = { version = "1.8", features = ["hex"], optional = true }
-serde_yaml = { version = "0.8", optional = true }
+serde_with = { version = "1.14", features = ["hex"], optional = true }
+serde_yaml = { version = "0.9", optional = true }
 serde_json = { version = "1", optional = true }
 base64-compat = { version = "1.0.0", optional = true }
-clap = { version = "~3.1.18", optional = true, features = ["derive", "env"] }
+clap = { version = "~3.2.23", optional = true, features = ["derive", "env"] }
 colored = "2.0.0"
 
 [features]
 default = []
 all = ["serde", "cli"]
-serde = ["serde_crate", "serde_with", "lnpbp/serde", "bitcoin/use-serde", "rgb-std/serde", "amplify/serde", "chrono/serde"]
+serde = ["serde_crate", "serde_with", "lnpbp/serde", "bitcoin/serde", "rgb-std/serde", "amplify/serde", "chrono/serde"]
 cli = ["clap", "serde", "serde_yaml", "serde_json", "base64-compat"]
